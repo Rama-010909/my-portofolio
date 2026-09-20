@@ -1,17 +1,17 @@
 /* ========================================
-   NOVA PORTFOLIO - Main Page Engine
+   RAMZZ PORTFOLIO - Main Page Engine
 ======================================== */
 
-const STORAGE_KEY = "novaPortfolio";
+const STORAGE_KEY = "ramzzPortfolio";
 
 const defaultData = {
-  displayName: "Nova",
+  displayName: "Rama",
   jobTitle: "Full-Stack Developer & Creative Technologist",
   profilePhoto: "",
   heroSubtitle: "Full-Stack Developer & Creative Technologist specializing in immersive web experiences.",
   aboutTitle: "Building experiences that feel alive",
   aboutText: "I'm a passionate developer who believes the web should be more than static pages. Every project I touch gets a unique personality — smooth animations, thoughtful interactions, and designs that make people stop and stare. From concept to deployment, I craft digital products that leave a lasting impression.",
-  contactEmail: "hello@nova.dev",
+  contactEmail: "hello@ramzz.dev",
   contactLocation: "Jakarta, Indonesia",
   stats: { projects: 50, years: 5, clients: 30 },
   skills: [
@@ -35,7 +35,7 @@ const defaultData = {
   experience: [
     { id: 1, date: "2023 — Present", title: "Senior Frontend Engineer", company: "Stellar Labs", desc: "Leading the design system and building immersive product experiences for enterprise clients." },
     { id: 2, date: "2021 — 2023", title: "Creative Developer", company: "Pixel & Code", desc: "Crafted award-winning websites and interactive installations for global brands." },
-    { id: 3, date: "2019 — 2021", title: "Frontend Developer", company: "Nova Digital", desc: "Built responsive web applications and contributed to open-source animation libraries." }
+    { id: 3, date: "2019 — 2021", title: "Frontend Developer", company: "Ramzz Digital", desc: "Built responsive web applications and contributed to open-source animation libraries." }
   ]
 };
 
