@@ -44,9 +44,9 @@
       <li><a href="#contact" class="nav-link">Contact</a></li>
     </ul>
     <div class="nav-actions">
-      <button id="adminBtn" class="admin-btn" title="Admin Panel">
+      <a href="admin.html" class="admin-btn" title="Admin Panel">
         <i class="fas fa-shield-halved"></i>
-      </button>
+      </a>
       <button class="menu-toggle" id="menuToggle">
         <span></span><span></span><span></span>
       </button>
@@ -128,8 +128,9 @@
     <div class="about-grid">
       <div class="about-image">
         <div class="image-frame">
-          <div class="image-placeholder">
-            <i class="fas fa-user-astronaut"></i>
+          <div class="image-placeholder" id="profilePhotoBox">
+            <i class="fas fa-user-astronaut" id="profileIcon"></i>
+            <img id="profileImg" src="" alt="Profile" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:30px;">
           </div>
           <div class="frame-glow"></div>
         </div>
@@ -259,145 +260,6 @@
     </div>
   </footer>
 
-  <!-- Admin Login Modal -->
-  <div class="modal-overlay" id="loginModal">
-    <div class="modal login-modal">
-      <button class="modal-close" id="closeLogin">&times;</button>
-      <div class="modal-header">
-        <div class="modal-icon"><i class="fas fa-lock"></i></div>
-        <h2>Admin Access</h2>
-        <p>Enter credentials to manage content</p>
-      </div>
-      <form id="loginForm">
-        <div class="form-group">
-          <input type="text" id="username" required placeholder=" ">
-          <label for="username">Username</label>
-        </div>
-        <div class="form-group">
-          <input type="password" id="password" required placeholder=" ">
-          <label for="password">Password</label>
-        </div>
-        <div class="login-error" id="loginError"></div>
-        <button type="submit" class="btn btn-primary btn-full">
-          <span>Login</span>
-          <i class="fas fa-arrow-right"></i>
-        </button>
-      </form>
-      <p class="login-hint">Demo: admin / nova2026</p>
-    </div>
-  </div>
-
-  <!-- Admin Dashboard -->
-  <div class="admin-panel" id="adminPanel">
-    <div class="admin-sidebar">
-      <div class="admin-logo">NOVA<span>Admin</span></div>
-      <nav class="admin-nav">
-        <button class="admin-nav-btn active" data-tab="content"><i class="fas fa-edit"></i> Content</button>
-        <button class="admin-nav-btn" data-tab="projects"><i class="fas fa-folder"></i> Projects</button>
-        <button class="admin-nav-btn" data-tab="skills"><i class="fas fa-code"></i> Skills</button>
-        <button class="admin-nav-btn" data-tab="experience"><i class="fas fa-briefcase"></i> Experience</button>
-        <button class="admin-nav-btn" data-tab="settings"><i class="fas fa-cog"></i> Settings</button>
-      </nav>
-      <button class="logout-btn" id="logoutBtn">
-        <i class="fas fa-sign-out-alt"></i> Logout
-      </button>
-    </div>
-    <div class="admin-main">
-      <div class="admin-header">
-        <h2 id="adminTitle">Edit Content</h2>
-        <button class="btn btn-primary" id="saveAllBtn"><i class="fas fa-save"></i> Save All</button>
-      </div>
-      
-      <!-- Content Tab -->
-      <div class="admin-tab active" id="tab-content">
-        <div class="admin-card">
-          <h3>Hero Section</h3>
-          <div class="form-group">
-            <label>Subtitle</label>
-            <input type="text" id="editHeroSubtitle">
-          </div>
-        </div>
-        <div class="admin-card">
-          <h3>About Section</h3>
-          <div class="form-group">
-            <label>Title</label>
-            <input type="text" id="editAboutTitle">
-          </div>
-          <div class="form-group">
-            <label>Description</label>
-            <textarea id="editAboutText" rows="4"></textarea>
-          </div>
-        </div>
-        <div class="admin-card">
-          <h3>Contact Info</h3>
-          <div class="form-group">
-            <label>Email</label>
-            <input type="email" id="editEmail">
-          </div>
-          <div class="form-group">
-            <label>Location</label>
-            <input type="text" id="editLocation">
-          </div>
-        </div>
-      </div>
-
-      <!-- Projects Tab -->
-      <div class="admin-tab" id="tab-projects">
-        <div class="admin-card">
-          <div class="card-header">
-            <h3>Manage Projects</h3>
-            <button class="btn btn-sm" id="addProjectBtn"><i class="fas fa-plus"></i> Add</button>
-          </div>
-          <div id="projectsList" class="admin-list"></div>
-        </div>
-      </div>
-
-      <!-- Skills Tab -->
-      <div class="admin-tab" id="tab-skills">
-        <div class="admin-card">
-          <div class="card-header">
-            <h3>Manage Skills</h3>
-            <button class="btn btn-sm" id="addSkillBtn"><i class="fas fa-plus"></i> Add</button>
-          </div>
-          <div id="skillsList" class="admin-list"></div>
-        </div>
-      </div>
-
-      <!-- Experience Tab -->
-      <div class="admin-tab" id="tab-experience">
-        <div class="admin-card">
-          <div class="card-header">
-            <h3>Manage Experience</h3>
-            <button class="btn btn-sm" id="addExpBtn"><i class="fas fa-plus"></i> Add</button>
-          </div>
-          <div id="expList" class="admin-list"></div>
-        </div>
-      </div>
-
-      <!-- Settings Tab -->
-      <div class="admin-tab" id="tab-settings">
-        <div class="admin-card">
-          <h3>Change Password</h3>
-          <div class="form-group">
-            <label>New Username</label>
-            <input type="text" id="newUsername">
-          </div>
-          <div class="form-group">
-            <label>New Password</label>
-            <input type="password" id="newPassword">
-          </div>
-          <button class="btn btn-primary" id="updateCredsBtn">Update Credentials</button>
-        </div>
-        <div class="admin-card">
-          <h3>Danger Zone</h3>
-          <button class="btn btn-danger" id="resetDataBtn">Reset All Data to Default</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Toast Notification -->
-  <div class="toast" id="toast"></div>
 
   <script src="script.js"></script>
 </body>
