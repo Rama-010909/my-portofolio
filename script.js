@@ -77,7 +77,11 @@ window.addEventListener("load", () => {
   }, 280);
 
   setTimeout(() => {
-    $("#loader")?.classList.add("hidden");
+    const loader = document.getElementById("loader");
+    if (loader) {
+      loader.classList.add("hidden");
+      setTimeout(() => { loader.style.display = "none"; }, 900);
+    }
     initApp();
   }, 3200);
 });
@@ -411,8 +415,7 @@ function initMusic() {
         setPlaying(true);
       }
     } catch (err) {
-      alert("File lagu belum ditemukan.
-Pastikan about-you.mp3 ada di folder yang sama.");
+      alert("File lagu belum ditemukan. Pastikan about-you.mp3 ada di folder yang sama.");
       console.warn("Music error:", err);
     }
   });
