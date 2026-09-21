@@ -17,6 +17,12 @@ const defaultData = {
   aboutText: "I'm a passionate developer who believes the web should be more than static pages. Every project I touch gets a unique personality — smooth animations, thoughtful interactions, and designs that make people stop and stare. From concept to deployment, I craft digital products that leave a lasting impression.",
   contactEmail: "hello@ramzz.dev",
   contactLocation: "Jakarta, Indonesia",
+  socialWa: "",
+  socialIg: "",
+  socialTt: "",
+  socialGh: "",
+  cloudUrl: "",
+  cloudPath: "ramzz",
   stats: { projects: 50, years: 5, clients: 30 },
   skills: [
     { name: "JavaScript", icon: "fab fa-js", level: 95 },
@@ -129,6 +135,74 @@ function saveData() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
+
+function getCloudEndpoint() {
+  const base = (data.cloudUrl || "").replace(/\/$/, "");
+  if (!base) return null;
+  const path = (data.cloudPath || "ramzz").replace(/^\/|\/$/g, "") || "ramzz";
+  return base + "/" + path + ".json";
+}
+
+async function cloudSave() {
+  const url = getCloudEndpoint();
+  if (!url) return { ok: false, skip: true };
+  try {
+    const res = await fetch(url, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    return { ok: true };
+  } catch (e) {
+    console.error("cloudSave", e);
+    return { ok: false, error: e.message };
+  }
+}
+
+async function cloudLoad() {
+  const url = getCloudEndpoint();
+  if (!url) return null;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const remote = await res.json();
+    if (remote && typeof remote === "object") return remote;
+  } catch (e) {
+    console.error("cloudLoad", e);
+  }
+  return null;
+}
+
+function compressImage(file, maxEdge = 900, quality = 0.72) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const objUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(objUrl);
+      let width = img.width;
+      let height = img.height;
+      if (width > maxEdge || height > maxEdge) {
+        if (width > height) {
+          height = Math.round((height * maxEdge) / width);
+          width = maxEdge;
+        } else {
+          width = Math.round((width * maxEdge) / height);
+          height = maxEdge;
+        }
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL("image/jpeg", quality));
+    };
+    img.onerror = reject;
+    img.src = objUrl;
+  });
+}
+
+
 function showToast(msg, type = "success") {
   const t = document.getElementById("toast");
   t.textContent = msg;
@@ -160,9 +234,20 @@ function showLogin() {
   document.getElementById("adminDashboard").style.display = "none";
 }
 
-function showDashboard() {
+async function showDashboard() {
   document.getElementById("loginScreen").style.display = "none";
   document.getElementById("adminDashboard").style.display = "flex";
+  // Try pull from cloud if configured
+  if (data.cloudUrl) {
+    const remote = await cloudLoad();
+    if (remote) {
+      data = { ...structuredClone(defaultData), ...remote };
+      // keep credentials if remote missing them
+      if (!data.credentials) data.credentials = defaultData.credentials;
+      saveData();
+      showToast("Data cloud dimuat");
+    }
+  }
   populateAll();
   updateStats();
 }
@@ -217,6 +302,37 @@ function bindEvents() {
 
   // Save All
   document.getElementById("saveBtn").addEventListener("click", saveAll);
+
+  document.getElementById("testCloudBtn")?.addEventListener("click", async () => {
+    const cu = document.getElementById("editCloudUrl")?.value.trim();
+    const cp = document.getElementById("editCloudPath")?.value.trim() || "ramzz";
+    if (cu) {
+      data.cloudUrl = cu;
+      data.cloudPath = cp;
+      saveData();
+    }
+    if (!getCloudEndpoint()) {
+      showToast("Isi Firebase URL dulu", "error");
+      return;
+    }
+    showToast("Menghubungi cloud...");
+    const remote = await cloudLoad();
+    if (remote) {
+      data = { ...structuredClone(defaultData), ...remote };
+      if (!data.credentials) data.credentials = defaultData.credentials;
+      data.cloudUrl = cu || data.cloudUrl;
+      data.cloudPath = cp;
+      saveData();
+      populateAll();
+      updateStats();
+      showToast("Berhasil ambil data dari cloud!");
+    } else {
+      // try write empty test
+      const w = await cloudSave();
+      if (w.ok) showToast("Cloud OK (masih kosong / siap tulis)");
+      else showToast("Gagal: " + (w.error || "cek URL & rules Firebase"), "error");
+    }
+  });
 
   // Profile photo
   document.getElementById("profileInput").addEventListener("change", handleProfileUpload);
@@ -301,6 +417,10 @@ function populateAll() {
   document.getElementById("editAboutText").value = data.aboutText || "";
   document.getElementById("editEmail").value = data.contactEmail || "";
   document.getElementById("editLocation").value = data.contactLocation || "";
+  document.getElementById("editSocialWa").value = data.socialWa || "";
+  document.getElementById("editSocialIg").value = data.socialIg || "";
+  document.getElementById("editSocialTt").value = data.socialTt || "";
+  document.getElementById("editSocialGh").value = data.socialGh || "";
   document.getElementById("editStatProjects").value = data.stats?.projects ?? 50;
   document.getElementById("editStatYears").value = data.stats?.years ?? 5;
   document.getElementById("editStatClients").value = data.stats?.clients ?? 30;
@@ -331,20 +451,21 @@ function renderProfilePreview() {
   }
 }
 
-function handleProfileUpload(e) {
+async function handleProfileUpload(e) {
   const file = e.target.files[0];
   if (!file) return;
-  if (file.size > 2 * 1024 * 1024) {
-    showToast("Ukuran foto max 2MB", "error");
+  if (file.size > 8 * 1024 * 1024) {
+    showToast("Ukuran foto max 8MB", "error");
     return;
   }
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    data.profilePhoto = ev.target.result;
+  try {
+    showToast("Mengompres foto...");
+    data.profilePhoto = await compressImage(file, 900, 0.72);
     renderProfilePreview();
-    showToast("Foto dipilih — klik Simpan Semua");
-  };
-  reader.readAsDataURL(file);
+    showToast("Foto siap — klik Simpan Semua (akan sync ke cloud jika URL sudah diisi)");
+  } catch (err) {
+    showToast("Gagal proses foto", "error");
+  }
   e.target.value = "";
 }
 
@@ -423,19 +544,19 @@ function renderProjectImagePreview(src) {
   }
 }
 
-function handleProjectImageUpload(e) {
+async function handleProjectImageUpload(e) {
   const file = e.target.files[0];
   if (!file) return;
-  if (file.size > 2 * 1024 * 1024) {
-    showToast("Ukuran gambar max 2MB", "error");
+  if (file.size > 8 * 1024 * 1024) {
+    showToast("Ukuran gambar max 8MB", "error");
     return;
   }
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    tempProjectImage = ev.target.result;
+  try {
+    tempProjectImage = await compressImage(file, 1200, 0.75);
     renderProjectImagePreview(tempProjectImage);
-  };
-  reader.readAsDataURL(file);
+  } catch (err) {
+    showToast("Gagal proses gambar", "error");
+  }
   e.target.value = "";
 }
 
@@ -548,7 +669,7 @@ function deleteExp(i) {
 }
 
 // ========== SAVE ALL ==========
-function saveAll() {
+async function saveAll() {
   data.displayName = document.getElementById("editDisplayName").value.trim();
   data.jobTitle = document.getElementById("editJobTitle").value.trim();
   data.welcomeLine = document.getElementById("editWelcomeLine").value.trim();
@@ -559,14 +680,32 @@ function saveAll() {
   data.aboutText = document.getElementById("editAboutText").value.trim();
   data.contactEmail = document.getElementById("editEmail").value.trim();
   data.contactLocation = document.getElementById("editLocation").value.trim();
+  data.socialWa = document.getElementById("editSocialWa").value.trim();
+  data.socialIg = document.getElementById("editSocialIg").value.trim();
+  data.socialTt = document.getElementById("editSocialTt").value.trim();
+  data.socialGh = document.getElementById("editSocialGh").value.trim();
   data.stats = {
     projects: +document.getElementById("editStatProjects").value || 0,
     years: +document.getElementById("editStatYears").value || 0,
     clients: +document.getElementById("editStatClients").value || 0
   };
+  // cloud config from form
+  const cu = document.getElementById("editCloudUrl");
+  const cp = document.getElementById("editCloudPath");
+  if (cu) data.cloudUrl = cu.value.trim();
+  if (cp) data.cloudPath = cp.value.trim() || "ramzz";
+
   saveData();
   updateStats();
-  showToast("Semua perubahan berhasil disimpan!");
+  showToast("Menyimpan ke cloud...");
+  const result = await cloudSave();
+  if (result.skip) {
+    showToast("Tersimpan lokal. Isi Firebase URL di Settings agar sync ke semua perangkat.");
+  } else if (result.ok) {
+    showToast("Tersimpan lokal + cloud! HP & PC akan sama.");
+  } else {
+    showToast("Lokal OK, cloud gagal: " + (result.error || "cek URL Firebase"), "error");
+  }
 }
 
 function escapeHtml(str) {

@@ -217,6 +217,25 @@
           </div>
         </div>
         <div class="card">
+          <h3>Social Media Links</h3>
+          <div class="form-group">
+            <label>WhatsApp (contoh: https://wa.me/6281234567890)</label>
+            <input type="url" id="editSocialWa" placeholder="https://wa.me/62...">
+          </div>
+          <div class="form-group">
+            <label>Instagram</label>
+            <input type="url" id="editSocialIg" placeholder="https://instagram.com/username">
+          </div>
+          <div class="form-group">
+            <label>TikTok</label>
+            <input type="url" id="editSocialTt" placeholder="https://tiktok.com/@username">
+          </div>
+          <div class="form-group">
+            <label>GitHub</label>
+            <input type="url" id="editSocialGh" placeholder="https://github.com/username">
+          </div>
+        </div>
+        <div class="card">
           <h3>Stats (Angka di Hero)</h3>
           <div class="form-row three">
             <div class="form-group">
@@ -270,6 +289,32 @@
 
       <!-- SETTINGS -->
       <section id="sec-settings" class="section">
+        <div class="card">
+          <h3>Cloud Sync (simpan lintas perangkat)</h3>
+          <p style="color:var(--text3);font-size:0.9rem;margin-bottom:1rem;">
+            Isi URL Firebase Realtime Database supaya data & foto profil sama di HP dan komputer.
+            Panduan singkat ada di bawah form.
+          </p>
+          <div class="form-group">
+            <label>Firebase Database URL</label>
+            <input type="url" id="editCloudUrl" placeholder="https://NAMA-PROJECT-default-rtdb.asia-southeast1.firebasedatabase.app">
+          </div>
+          <div class="form-group">
+            <label>Path data (opsional)</label>
+            <input type="text" id="editCloudPath" placeholder="ramzz" value="ramzz">
+          </div>
+          <button type="button" class="btn btn-outline" id="testCloudBtn">
+            <i class="fas fa-cloud"></i> Test & Ambil Data Cloud
+          </button>
+          <div class="cloud-help" style="margin-top:1.2rem;padding:1rem;background:rgba(0,0,0,0.25);border-radius:12px;font-size:0.85rem;color:var(--text2);line-height:1.6;">
+            <strong style="color:var(--cyan);">Cara setup gratis (sekali saja):</strong><br>
+            1. Buka <a href="https://console.firebase.google.com" target="_blank" rel="noopener" style="color:var(--cyan);">console.firebase.google.com</a><br>
+            2. Create project → Build → <strong>Realtime Database</strong> → Create Database → Start in <strong>test mode</strong><br>
+            3. Copy URL database (contoh: https://xxx-default-rtdb.asia-southeast1.firebasedatabase.app)<br>
+            4. Paste di atas → Simpan Semua<br>
+            5. Rules test mode biasanya aktif 30 hari; untuk portfolio pribadi bisa set read/write true
+          </div>
+        </div>
         <div class="card">
           <h3>Ganti Username & Password</h3>
           <div class="form-row">

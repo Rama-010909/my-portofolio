@@ -16,6 +16,12 @@ const defaultData = {
   aboutText: "I'm a passionate developer who believes the web should be more than static pages. Every project I touch gets a unique personality — smooth animations, thoughtful interactions, and designs that make people stop and stare. From concept to deployment, I craft digital products that leave a lasting impression.",
   contactEmail: "hello@ramzz.dev",
   contactLocation: "Jakarta, Indonesia",
+  socialWa: "",
+  socialIg: "",
+  socialTt: "",
+  socialGh: "",
+  cloudUrl: "",
+  cloudPath: "ramzz",
   stats: { projects: 50, years: 5, clients: 30 },
   skills: [
     { name: "JavaScript", icon: "fab fa-js", level: 95 },
@@ -52,29 +58,61 @@ function loadData() {
 
 let data = loadData();
 
-// Apply welcome text to loader immediately
-(function applyWelcome() {
+function getCloudEndpoint() {
+  const base = (data.cloudUrl || "").replace(/\/$/, "");
+  if (!base) return null;
+  const path = (data.cloudPath || "ramzz").replace(/^\/|\/$/g, "") || "ramzz";
+  return base + "/" + path + ".json";
+}
+
+async function pullCloudData() {
+  const url = getCloudEndpoint();
+  if (!url) return false;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return false;
+    const remote = await res.json();
+    if (remote && typeof remote === "object") {
+      data = { ...structuredClone(defaultData), ...remote };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      return true;
+    }
+  } catch (e) {
+    console.warn("cloud pull failed", e);
+  }
+  return false;
+}
+
+function applyWelcome() {
   const line = document.getElementById("welcomeLine1");
   const name = document.getElementById("welcomeName");
   const sub = document.getElementById("welcomeSub");
   if (line && data.welcomeLine) line.textContent = data.welcomeLine;
   if (name && data.welcomeName) name.textContent = data.welcomeName;
   if (sub && data.welcomeSub) sub.textContent = data.welcomeSub;
-})();
+}
+applyWelcome();
 
 
 function $(sel) { return document.querySelector(sel); }
 function $$(sel) { return document.querySelectorAll(sel); }
 
-window.addEventListener("load", () => {
+window.addEventListener("load", async () => {
   const bar = document.getElementById("loaderBar");
   let progress = 0;
   const tick = setInterval(() => {
-    progress += Math.random() * 18 + 8;
-    if (progress > 100) progress = 100;
+    progress += Math.random() * 12 + 5;
+    if (progress > 90) progress = 90;
     if (bar) bar.style.width = progress + "%";
-    if (progress >= 100) clearInterval(tick);
   }, 280);
+
+  // Pull shared data from cloud (foto profil, teks, dll)
+  await pullCloudData();
+  applyWelcome();
+
+  progress = 100;
+  if (bar) bar.style.width = "100%";
+  clearInterval(tick);
 
   setTimeout(() => {
     const loader = document.getElementById("loader");
@@ -83,7 +121,7 @@ window.addEventListener("load", () => {
       setTimeout(() => { loader.style.display = "none"; }, 900);
     }
     initApp();
-  }, 3200);
+  }, 600);
 });
 
 function initApp() {
@@ -275,6 +313,16 @@ function renderContent() {
   const loc = $("#contactLocation");
   if (email) email.textContent = data.contactEmail;
   if (loc) loc.textContent = data.contactLocation;
+  const setSocial = (id, url) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (url) { el.href = url; el.style.display = ""; }
+    else { el.href = "#"; }
+  };
+  setSocial("socialWa", data.socialWa);
+  setSocial("socialIg", data.socialIg);
+  setSocial("socialTt", data.socialTt);
+  setSocial("socialGh", data.socialGh);
 
   const skillsContainer = $("#skillsContainer");
   if (skillsContainer) {
