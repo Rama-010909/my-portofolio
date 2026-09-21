@@ -453,7 +453,7 @@ function initMusic() {
   });
 
   // Click progress to seek
-  document.querySelector(".sp-progress")?.addEventListener("click", (e) => {
+  document.getElementById("spProgressWrap")?.addEventListener("click", (e) => {
     if (!audio.duration) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const pct = (e.clientX - rect.left) / rect.width;

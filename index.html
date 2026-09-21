@@ -45,6 +45,7 @@
     </div>
     <ul class="nav-links">
       <li><a href="#home" class="nav-link active">Home</a></li>
+      <li><a href="#music" class="nav-link">Music</a></li>
       <li><a href="#about" class="nav-link">About</a></li>
       <li><a href="#skills" class="nav-link">Skills</a></li>
       <li><a href="#projects" class="nav-link">Projects</a></li>
@@ -64,6 +65,7 @@
   <!-- Mobile Menu -->
   <div class="mobile-menu" id="mobileMenu">
     <a href="#home" class="mobile-link">Home</a>
+    <a href="#music" class="mobile-link">Music</a>
     <a href="#about" class="mobile-link">About</a>
     <a href="#skills" class="mobile-link">Skills</a>
     <a href="#projects" class="mobile-link">Projects</a>
@@ -127,10 +129,46 @@
     </div>
   </section>
 
+
+  <!-- Music Section -->
+  <section id="music" class="music-section">
+    <div class="section-header">
+      <span class="section-tag">01 // Favorite Track</span>
+      <h2 class="section-title">Now Playing</h2>
+    </div>
+    <div class="music-card" id="favSong">
+      <div class="music-card-cover" id="musicToggle" title="Play / Pause">
+        <img src="cover.jpg" alt="About You" class="music-card-img">
+        <div class="music-card-play">
+          <i class="fas fa-play" id="musicIcon"></i>
+        </div>
+        <div class="music-card-glow"></div>
+      </div>
+      <div class="music-card-body">
+        <span class="music-card-label">Favorite Song</span>
+        <h3 class="music-card-title">About You</h3>
+        <p class="music-card-artist">The 1975</p>
+        <div class="music-card-progress" id="spProgressWrap">
+          <div class="music-card-bar" id="spProgress"></div>
+        </div>
+        <div class="music-card-time">
+          <span id="spCurrent">0:00</span>
+          <span id="spDuration">0:00</span>
+        </div>
+        <div class="music-card-bars" id="musicBars">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <audio id="bgMusic" loop preload="metadata">
+    <source src="about-you.mp3" type="audio/mpeg">
+  </audio>
+
   <!-- About Section -->
   <section id="about" class="about">
     <div class="section-header">
-      <span class="section-tag">01 // About</span>
+      <span class="section-tag">02 // About</span>
       <h2 class="section-title">Who I Am</h2>
     </div>
     <div class="about-grid">
@@ -175,7 +213,7 @@
   <!-- Skills Section -->
   <section id="skills" class="skills">
     <div class="section-header">
-      <span class="section-tag">02 // Skills</span>
+      <span class="section-tag">03 // Skills</span>
       <h2 class="section-title">Tech Arsenal</h2>
     </div>
     <div class="skills-orbit" id="skillsContainer">
@@ -186,7 +224,7 @@
   <!-- Projects Section -->
   <section id="projects" class="projects">
     <div class="section-header">
-      <span class="section-tag">03 // Projects</span>
+      <span class="section-tag">04 // Projects</span>
       <h2 class="section-title">Selected Works</h2>
     </div>
     <div class="project-filters">
@@ -204,7 +242,7 @@
   <!-- Experience Section -->
   <section id="experience" class="experience">
     <div class="section-header">
-      <span class="section-tag">04 // Journey</span>
+      <span class="section-tag">05 // Journey</span>
       <h2 class="section-title">Experience</h2>
     </div>
     <div class="timeline" id="timeline">
@@ -215,7 +253,7 @@
   <!-- Contact Section -->
   <section id="contact" class="contact">
     <div class="section-header">
-      <span class="section-tag">05 // Contact</span>
+      <span class="section-tag">06 // Contact</span>
       <h2 class="section-title">Let's Create Together</h2>
     </div>
     <div class="contact-wrapper">
@@ -267,37 +305,6 @@
       <p>Designed & built with passion and too much coffee.</p>
       <p class="copyright">© 2026 Ramzz. All rights reserved.</p>
     </div>
-  </footer>
-  <!-- Spotify-style Music Player -->
-  <div class="spotify-player" id="favSong">
-    <div class="sp-inner">
-      <div class="sp-cover" id="musicToggle" title="Play / Pause">
-        <img src="cover.jpg" alt="About You" class="sp-cover-img">
-        <div class="sp-play-btn">
-          <i class="fas fa-play" id="musicIcon"></i>
-        </div>
-      </div>
-      <div class="sp-info">
-        <span class="sp-label">Now Playing</span>
-        <h3 class="sp-title">About You</h3>
-        <p class="sp-artist">The 1975</p>
-        <div class="sp-progress">
-          <div class="sp-progress-bar" id="spProgress"></div>
-        </div>
-        <div class="sp-time">
-          <span id="spCurrent">0:00</span>
-          <span id="spDuration">0:00</span>
-        </div>
-      </div>
-      <div class="sp-bars" id="musicBars">
-        <span></span><span></span><span></span><span></span><span></span>
-      </div>
-    </div>
-  </div>
-  <audio id="bgMusic" loop preload="metadata">
-    <source src="about-you.mp3" type="audio/mpeg">
-  </audio>
-
-<script src="script.js"></script>
+  </footer><script src="script.js"></script>
 </body>
 </html>
