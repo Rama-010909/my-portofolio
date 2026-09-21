@@ -165,6 +165,20 @@ function showDashboard() {
 }
 
 function bindEvents() {
+
+  // Password eye toggle
+  const togglePass = document.getElementById("togglePass");
+  const loginPass = document.getElementById("loginPass");
+  const eyeIcon = document.getElementById("eyeIcon");
+  if (togglePass && loginPass) {
+    togglePass.addEventListener("click", () => {
+      const isPass = loginPass.type === "password";
+      loginPass.type = isPass ? "text" : "password";
+      eyeIcon.className = isPass ? "fas fa-eye-slash" : "fas fa-eye";
+      togglePass.classList.toggle("active", isPass);
+    });
+  }
+
   // Login
   document.getElementById("loginForm").addEventListener("submit", (e) => {
     e.preventDefault();

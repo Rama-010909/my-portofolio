@@ -68,6 +68,7 @@ function initApp() {
   initFilters();
   initContactForm();
   initCounters();
+  initMusic();
 }
 
 function initParticles() {
@@ -100,10 +101,10 @@ function initParticles() {
       this.opacity = Math.random() * 0.6 + 0.2;
       const r = Math.random();
       this.color = r > 0.6
-        ? `rgba(0, 240, 255, ${this.opacity})`
+        ? `rgba(168, 180, 196, ${this.opacity})`
         : r > 0.3
-          ? `rgba(178, 75, 243, ${this.opacity})`
-          : `rgba(255, 45, 149, ${this.opacity})`;
+          ? `rgba(120, 130, 150, ${this.opacity})`
+          : `rgba(140, 150, 165, ${this.opacity})`;
     }
     update() {
       this.x += this.speedX;
@@ -137,7 +138,7 @@ function initParticles() {
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < 100) {
           ctx.beginPath();
-          ctx.strokeStyle = `rgba(0, 240, 255, ${0.12 * (1 - dist / 100)})`;
+          ctx.strokeStyle = `rgba(160, 170, 185, ${0.1 * (1 - dist / 100)})`;
           ctx.lineWidth = 0.5;
           ctx.moveTo(particles[a].x, particles[a].y);
           ctx.lineTo(particles[b].x, particles[b].y);
@@ -357,6 +358,44 @@ function initFilters() {
         }
       });
     });
+  });
+}
+
+
+// ========== MUSIC PLAYER ==========
+function initMusic() {
+  const audio = document.getElementById("bgMusic");
+  const btn = document.getElementById("musicToggle");
+  const icon = document.getElementById("musicIcon");
+  const bars = document.getElementById("musicBars");
+  if (!audio || !btn) return;
+
+  let playing = false;
+
+  btn.addEventListener("click", async () => {
+    try {
+      if (playing) {
+        audio.pause();
+        icon.className = "fas fa-play";
+        bars?.classList.remove("playing");
+        playing = false;
+      } else {
+        await audio.play();
+        icon.className = "fas fa-pause";
+        bars?.classList.add("playing");
+        playing = true;
+      }
+    } catch (err) {
+      // File missing or autoplay blocked
+      alert("File lagu belum ada.\n\nTaruh file \"about-you.mp3\" di folder yang sama dengan index.html, lalu refresh.");
+      console.warn("Music error:", err);
+    }
+  });
+
+  audio.addEventListener("ended", () => {
+    icon.className = "fas fa-play";
+    bars?.classList.remove("playing");
+    playing = false;
   });
 }
 

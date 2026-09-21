@@ -261,6 +261,24 @@
   </footer>
 
 
+
+  <!-- Music Player -->
+  <div class="music-player" id="musicPlayer">
+    <button class="music-btn" id="musicToggle" title="Play / Pause">
+      <i class="fas fa-play" id="musicIcon"></i>
+    </button>
+    <div class="music-info">
+      <span class="music-title">About You</span>
+      <span class="music-artist">The 1975</span>
+    </div>
+    <div class="music-bars" id="musicBars">
+      <span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+  <audio id="bgMusic" loop preload="metadata">
+    <source src="about-you.mp3" type="audio/mpeg">
+  </audio>
+
   <script src="script.js"></script>
 </body>
 </html>
