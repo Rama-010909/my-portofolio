@@ -36,7 +36,7 @@ const defaultData = {
       desc: "Immersive e-commerce platform with 3D product previews and AI recommendations.",
       tags: ["React", "Three.js", "Node"],
       icon: "fas fa-shopping-bag",
-      image: ""
+      image: "", link: ""
     },
     {
       id: 2,
@@ -45,7 +45,7 @@ const defaultData = {
       desc: "Real-time analytics dashboard with custom data visualization and smooth transitions.",
       tags: ["Vue", "D3.js", "Firebase"],
       icon: "fas fa-chart-line",
-      image: ""
+      image: "", link: ""
     },
     {
       id: 3,
@@ -54,7 +54,7 @@ const defaultData = {
       desc: "Complete brand identity and interactive website for a luxury lifestyle brand.",
       tags: ["Figma", "GSAP", "Webflow"],
       icon: "fas fa-palette",
-      image: ""
+      image: "", link: ""
     },
     {
       id: 4,
@@ -63,7 +63,7 @@ const defaultData = {
       desc: "Next-gen social platform focused on creative communities and micro-interactions.",
       tags: ["React Native", "GraphQL"],
       icon: "fas fa-users",
-      image: ""
+      image: "", link: ""
     },
     {
       id: 5,
@@ -72,7 +72,7 @@ const defaultData = {
       desc: "Award-winning personal portfolio with particle systems and WebGL effects.",
       tags: ["Vanilla JS", "Canvas", "GLSL"],
       icon: "fas fa-star",
-      image: ""
+      image: "", link: ""
     },
     {
       id: 6,
@@ -81,7 +81,7 @@ const defaultData = {
       desc: "Editorial website with cinematic scroll storytelling and typography experiments.",
       tags: ["Next.js", "Framer Motion"],
       icon: "fas fa-book-open",
-      image: ""
+      image: "", link: ""
     }
   ],
   experience: [
@@ -388,6 +388,7 @@ function openProjectModal(index) {
     document.getElementById("editProjectIcon").value = "fas fa-star";
     document.getElementById("editProjectDesc").value = "";
     document.getElementById("editProjectTags").value = "";
+    document.getElementById("editProjectLink").value = "";
     renderProjectImagePreview("");
   } else {
     const p = data.projects[index];
@@ -398,6 +399,7 @@ function openProjectModal(index) {
     document.getElementById("editProjectIcon").value = p.icon || "fas fa-star";
     document.getElementById("editProjectDesc").value = p.desc;
     document.getElementById("editProjectTags").value = (p.tags || []).join(", ");
+    document.getElementById("editProjectLink").value = p.link || "";
     tempProjectImage = p.image || "";
     renderProjectImagePreview(p.image || "");
   }
@@ -455,6 +457,7 @@ function saveProjectFromModal() {
       .value.split(",")
       .map((t) => t.trim())
       .filter(Boolean),
+    link: document.getElementById("editProjectLink").value.trim(),
     image: tempProjectImage
   };
   if (idx !== "") {

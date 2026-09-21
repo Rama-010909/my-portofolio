@@ -28,12 +28,12 @@ const defaultData = {
     { name: "TypeScript", icon: "fas fa-code", level: 85 }
   ],
   projects: [
-    { id: 1, title: "Nebula Commerce", category: "web", desc: "Immersive e-commerce platform with 3D product previews and AI recommendations.", tags: ["React", "Three.js", "Node"], icon: "fas fa-shopping-bag", image: "" },
-    { id: 2, title: "Orbit Dashboard", category: "app", desc: "Real-time analytics dashboard with custom data visualization and smooth transitions.", tags: ["Vue", "D3.js", "Firebase"], icon: "fas fa-chart-line", image: "" },
-    { id: 3, title: "Lumina Brand", category: "design", desc: "Complete brand identity and interactive website for a luxury lifestyle brand.", tags: ["Figma", "GSAP", "Webflow"], icon: "fas fa-palette", image: "" },
-    { id: 4, title: "Pulse Social", category: "app", desc: "Next-gen social platform focused on creative communities and micro-interactions.", tags: ["React Native", "GraphQL"], icon: "fas fa-users", image: "" },
-    { id: 5, title: "Aether Portfolio", category: "web", desc: "Award-winning personal portfolio with particle systems and WebGL effects.", tags: ["Vanilla JS", "Canvas", "GLSL"], icon: "fas fa-star", image: "" },
-    { id: 6, title: "Void Magazine", category: "design", desc: "Editorial website with cinematic scroll storytelling and typography experiments.", tags: ["Next.js", "Framer Motion"], icon: "fas fa-book-open", image: "" }
+    { id: 1, title: "Nebula Commerce", category: "web", desc: "Immersive e-commerce platform with 3D product previews and AI recommendations.", tags: ["React", "Three.js", "Node"], icon: "fas fa-shopping-bag", image: "", link: "" },
+    { id: 2, title: "Orbit Dashboard", category: "app", desc: "Real-time analytics dashboard with custom data visualization and smooth transitions.", tags: ["Vue", "D3.js", "Firebase"], icon: "fas fa-chart-line", image: "", link: "" },
+    { id: 3, title: "Lumina Brand", category: "design", desc: "Complete brand identity and interactive website for a luxury lifestyle brand.", tags: ["Figma", "GSAP", "Webflow"], icon: "fas fa-palette", image: "", link: "" },
+    { id: 4, title: "Pulse Social", category: "app", desc: "Next-gen social platform focused on creative communities and micro-interactions.", tags: ["React Native", "GraphQL"], icon: "fas fa-users", image: "", link: "" },
+    { id: 5, title: "Aether Portfolio", category: "web", desc: "Award-winning personal portfolio with particle systems and WebGL effects.", tags: ["Vanilla JS", "Canvas", "GLSL"], icon: "fas fa-star", image: "", link: "" },
+    { id: 6, title: "Void Magazine", category: "design", desc: "Editorial website with cinematic scroll storytelling and typography experiments.", tags: ["Next.js", "Framer Motion"], icon: "fas fa-book-open", image: "", link: "" }
   ],
   experience: [
     { id: 1, date: "2023 — Present", title: "Senior Frontend Engineer", company: "Stellar Labs", desc: "Leading the design system and building immersive product experiences for enterprise clients." },
@@ -289,8 +289,16 @@ function renderContent() {
 
   const projectsGrid = $("#projectsGrid");
   if (projectsGrid) {
-    projectsGrid.innerHTML = data.projects.map((p) => `
+    projectsGrid.innerHTML = data.projects.map((p) => {
+      const hasLink = p.link && p.link.trim();
+      const openBtn = hasLink
+        ? `<a href="${p.link}" target="_blank" rel="noopener" class="project-open" onclick="event.stopPropagation()"><i class="fas fa-external-link-alt"></i> Buka Project</a>`
+        : "";
+      const wrapStart = hasLink ? `<a href="${p.link}" target="_blank" rel="noopener" class="project-link-wrap">` : "";
+      const wrapEnd = hasLink ? `</a>` : "";
+      return `
       <div class="project-card reveal" data-category="${p.category}">
+        ${wrapStart}
         <div class="project-image" ${p.image ? `style="background-image:url('${p.image}');background-size:cover;background-position:center;"` : ""}>
           ${p.image ? "" : `<i class="${p.icon || "fas fa-star"}"></i>`}
         </div>
@@ -301,9 +309,11 @@ function renderContent() {
           <div class="project-tags">
             ${(p.tags || []).map((t) => `<span class="project-tag">${t}</span>`).join("")}
           </div>
+          ${openBtn}
         </div>
-      </div>
-    `).join("");
+        ${wrapEnd}
+      </div>`;
+    }).join("");
   }
 
   const timeline = $("#timeline");
@@ -389,15 +399,25 @@ function initFilters() {
 }
 
 
-// ========== MUSIC / FAVORITE SONG ==========
+// ========== MUSIC / SPOTIFY PLAYER ==========
 function initMusic() {
   const audio = document.getElementById("bgMusic");
   const card = document.getElementById("favSong");
   const btn = document.getElementById("musicToggle");
   const icon = document.getElementById("musicIcon");
+  const progress = document.getElementById("spProgress");
+  const timeCur = document.getElementById("spCurrent");
+  const timeDur = document.getElementById("spDuration");
   if (!audio || !btn) return;
 
   let playing = false;
+
+  const fmt = (s) => {
+    if (!isFinite(s)) return "0:00";
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return m + ":" + String(sec).padStart(2, "0");
+  };
 
   const setPlaying = (on) => {
     playing = on;
@@ -418,6 +438,26 @@ function initMusic() {
       alert("File lagu belum ditemukan. Pastikan about-you.mp3 ada di folder yang sama.");
       console.warn("Music error:", err);
     }
+  });
+
+  audio.addEventListener("loadedmetadata", () => {
+    if (timeDur) timeDur.textContent = fmt(audio.duration);
+  });
+
+  audio.addEventListener("timeupdate", () => {
+    if (audio.duration) {
+      const pct = (audio.currentTime / audio.duration) * 100;
+      if (progress) progress.style.width = pct + "%";
+      if (timeCur) timeCur.textContent = fmt(audio.currentTime);
+    }
+  });
+
+  // Click progress to seek
+  document.querySelector(".sp-progress")?.addEventListener("click", (e) => {
+    if (!audio.duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    audio.currentTime = pct * audio.duration;
   });
 
   audio.addEventListener("ended", () => setPlaying(false));

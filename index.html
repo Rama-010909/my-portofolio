@@ -191,7 +191,8 @@
     </div>
     <div class="project-filters">
       <button class="filter-btn active" data-filter="all">All</button>
-      <button class="filter-btn" data-filter="web">Web</button>
+      <button class="filter-btn" data-filter="web">Website</button>
+      <button class="filter-btn" data-filter="canva">Canva</button>
       <button class="filter-btn" data-filter="app">App</button>
       <button class="filter-btn" data-filter="design">Design</button>
     </div>
@@ -267,24 +268,30 @@
       <p class="copyright">© 2026 Ramzz. All rights reserved.</p>
     </div>
   </footer>
-  <!-- Favorite Song -->
-  <div class="fav-song" id="favSong">
-    <div class="fav-cover" id="musicToggle" title="Play / Pause">
-      <div class="fav-cover-art">
-        <i class="fas fa-music"></i>
+  <!-- Spotify-style Music Player -->
+  <div class="spotify-player" id="favSong">
+    <div class="sp-inner">
+      <div class="sp-cover" id="musicToggle" title="Play / Pause">
+        <img src="cover.jpg" alt="About You" class="sp-cover-img">
+        <div class="sp-play-btn">
+          <i class="fas fa-play" id="musicIcon"></i>
+        </div>
       </div>
-      <div class="fav-play-overlay">
-        <i class="fas fa-play" id="musicIcon"></i>
+      <div class="sp-info">
+        <span class="sp-label">Now Playing</span>
+        <h3 class="sp-title">About You</h3>
+        <p class="sp-artist">The 1975</p>
+        <div class="sp-progress">
+          <div class="sp-progress-bar" id="spProgress"></div>
+        </div>
+        <div class="sp-time">
+          <span id="spCurrent">0:00</span>
+          <span id="spDuration">0:00</span>
+        </div>
       </div>
-      <div class="fav-vinyl" id="favVinyl"></div>
-    </div>
-    <div class="fav-meta">
-      <span class="fav-label">Favorite Song</span>
-      <span class="fav-title">About You</span>
-      <span class="fav-artist">The 1975</span>
-    </div>
-    <div class="fav-bars" id="musicBars">
-      <span></span><span></span><span></span><span></span><span></span>
+      <div class="sp-bars" id="musicBars">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
     </div>
   </div>
   <audio id="bgMusic" loop preload="metadata">
