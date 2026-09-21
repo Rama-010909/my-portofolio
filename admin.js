@@ -17,10 +17,9 @@ const defaultData = {
   aboutText: "I'm a passionate developer who believes the web should be more than static pages. Every project I touch gets a unique personality — smooth animations, thoughtful interactions, and designs that make people stop and stare. From concept to deployment, I craft digital products that leave a lasting impression.",
   contactEmail: "hello@ramzz.dev",
   contactLocation: "Jakarta, Indonesia",
-  socialWa: "",
-  socialIg: "",
-  socialTt: "",
-  socialGh: "",
+  socialIg: "https://instagram.com/vrnjrzkyramadhn",
+  socialTt: "https://www.tiktok.com/@vrnjrzkyramadhn",
+  socialGh: "https://github.com/Rama-010909",
   cloudUrl: "",
   cloudPath: "ramzz",
   stats: { projects: 50, years: 5, clients: 30 },
@@ -245,7 +244,7 @@ async function showDashboard() {
       // keep credentials if remote missing them
       if (!data.credentials) data.credentials = defaultData.credentials;
       saveData();
-      showToast("Data cloud dimuat");
+      /* cloud merged silently */
     }
   }
   populateAll();
@@ -302,37 +301,6 @@ function bindEvents() {
 
   // Save All
   document.getElementById("saveBtn").addEventListener("click", saveAll);
-
-  document.getElementById("testCloudBtn")?.addEventListener("click", async () => {
-    const cu = document.getElementById("editCloudUrl")?.value.trim();
-    const cp = document.getElementById("editCloudPath")?.value.trim() || "ramzz";
-    if (cu) {
-      data.cloudUrl = cu;
-      data.cloudPath = cp;
-      saveData();
-    }
-    if (!getCloudEndpoint()) {
-      showToast("Isi Firebase URL dulu", "error");
-      return;
-    }
-    showToast("Menghubungi cloud...");
-    const remote = await cloudLoad();
-    if (remote) {
-      data = { ...structuredClone(defaultData), ...remote };
-      if (!data.credentials) data.credentials = defaultData.credentials;
-      data.cloudUrl = cu || data.cloudUrl;
-      data.cloudPath = cp;
-      saveData();
-      populateAll();
-      updateStats();
-      showToast("Berhasil ambil data dari cloud!");
-    } else {
-      // try write empty test
-      const w = await cloudSave();
-      if (w.ok) showToast("Cloud OK (masih kosong / siap tulis)");
-      else showToast("Gagal: " + (w.error || "cek URL & rules Firebase"), "error");
-    }
-  });
 
   // Profile photo
   document.getElementById("profileInput").addEventListener("change", handleProfileUpload);
@@ -417,7 +385,6 @@ function populateAll() {
   document.getElementById("editAboutText").value = data.aboutText || "";
   document.getElementById("editEmail").value = data.contactEmail || "";
   document.getElementById("editLocation").value = data.contactLocation || "";
-  document.getElementById("editSocialWa").value = data.socialWa || "";
   document.getElementById("editSocialIg").value = data.socialIg || "";
   document.getElementById("editSocialTt").value = data.socialTt || "";
   document.getElementById("editSocialGh").value = data.socialGh || "";
@@ -680,7 +647,6 @@ async function saveAll() {
   data.aboutText = document.getElementById("editAboutText").value.trim();
   data.contactEmail = document.getElementById("editEmail").value.trim();
   data.contactLocation = document.getElementById("editLocation").value.trim();
-  data.socialWa = document.getElementById("editSocialWa").value.trim();
   data.socialIg = document.getElementById("editSocialIg").value.trim();
   data.socialTt = document.getElementById("editSocialTt").value.trim();
   data.socialGh = document.getElementById("editSocialGh").value.trim();
@@ -697,14 +663,13 @@ async function saveAll() {
 
   saveData();
   updateStats();
-  showToast("Menyimpan ke cloud...");
   const result = await cloudSave();
   if (result.skip) {
-    showToast("Tersimpan lokal. Isi Firebase URL di Settings agar sync ke semua perangkat.");
+    showToast("Tersimpan. Isi Firebase URL di Settings untuk sync publik.");
   } else if (result.ok) {
-    showToast("Tersimpan lokal + cloud! HP & PC akan sama.");
+    showToast("Berhasil disimpan ke cloud.");
   } else {
-    showToast("Lokal OK, cloud gagal: " + (result.error || "cek URL Firebase"), "error");
+    showToast("Gagal sync cloud: " + (result.error || "cek URL / rules Firebase"), "error");
   }
 }
 

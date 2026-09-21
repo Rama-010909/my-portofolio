@@ -16,10 +16,9 @@ const defaultData = {
   aboutText: "I'm a passionate developer who believes the web should be more than static pages. Every project I touch gets a unique personality — smooth animations, thoughtful interactions, and designs that make people stop and stare. From concept to deployment, I craft digital products that leave a lasting impression.",
   contactEmail: "hello@ramzz.dev",
   contactLocation: "Jakarta, Indonesia",
-  socialWa: "",
-  socialIg: "",
-  socialTt: "",
-  socialGh: "",
+  socialIg: "https://instagram.com/vrnjrzkyramadhn",
+  socialTt: "https://www.tiktok.com/@vrnjrzkyramadhn",
+  socialGh: "https://github.com/Rama-010909",
   cloudUrl: "",
   cloudPath: "ramzz",
   stats: { projects: 50, years: 5, clients: 30 },
@@ -319,7 +318,6 @@ function renderContent() {
     if (url) { el.href = url; el.style.display = ""; }
     else { el.href = "#"; }
   };
-  setSocial("socialWa", data.socialWa);
   setSocial("socialIg", data.socialIg);
   setSocial("socialTt", data.socialTt);
   setSocial("socialGh", data.socialGh);
@@ -516,7 +514,15 @@ function initMusic() {
 function initContactForm() {
   $("#contactForm")?.addEventListener("submit", (e) => {
     e.preventDefault();
-    alert("Pesan terkirim! Saya akan segera membalas.");
+    const name = document.getElementById("name")?.value.trim() || "";
+    const email = document.getElementById("email")?.value.trim() || "";
+    const message = document.getElementById("message")?.value.trim() || "";
+    const to = (data.contactEmail || "hello@ramzz.dev").trim();
+    const subject = encodeURIComponent("Pesan dari Portfolio — " + name);
+    const body = encodeURIComponent(
+      "Nama: " + name + "\nEmail: " + email + "\n\nPesan:\n" + message
+    );
+    window.location.href = "mailto:" + to + "?subject=" + subject + "&body=" + body;
     e.target.reset();
   });
 }

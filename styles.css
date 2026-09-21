@@ -210,15 +210,29 @@ body:hover .cursor { transform: scale(1); }
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: var(--bg-glass);
-  border: 1px solid var(--border-glow);
-  color: var(--neon-cyan);
+  background: rgba(18, 18, 22, 0.9);
+  border: 1px solid rgba(160, 170, 185, 0.25);
+  color: #a8b4c4;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: var(--transition);
+  transition: all 0.3s ease;
   font-size: 1rem;
+  backdrop-filter: blur(12px);
+}
+
+.admin-btn-fixed {
+  position: fixed;
+  top: 1rem;
+  right: 1.2rem;
+  z-index: 1100;
+}
+
+.navbar.scrolled ~ .admin-btn-fixed,
+body:has(.navbar.scrolled) .admin-btn-fixed {
+  top: 1.1rem;
+  right: max(1.2rem, calc(50% - 480px + 0.5rem));
 }
 
 .admin-btn:hover {
@@ -1947,4 +1961,84 @@ to { height: 16px; }
   .section-title { font-size: 1.6rem !important; }
   .btn { padding: 0.75rem 1.2rem; font-size: 0.85rem; }
   .stat-num { font-size: 1.3rem; }
+}
+
+
+/* Admin always top-right */
+.admin-btn-fixed {
+  position: fixed !important;
+  top: 14px !important;
+  right: 14px !important;
+  left: auto !important;
+  z-index: 1100 !important;
+}
+
+@media (max-width: 768px) {
+  .admin-btn-fixed {
+    top: 12px !important;
+    right: 12px !important;
+    width: 38px;
+    height: 38px;
+  }
+  .navbar {
+    padding-right: 3.5rem !important; /* space for admin btn */
+  }
+  .nav-actions {
+    margin-right: 2.5rem;
+  }
+  .hero-content {
+    padding-top: 0.5rem;
+  }
+  .hero-title .line {
+    display: block;
+  }
+  .about-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center;
+  }
+  .about-content {
+    text-align: center;
+  }
+  .about-tags {
+    justify-content: center;
+  }
+  .skills-orbit {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.8rem !important;
+  }
+  .timeline {
+    padding-left: 1.2rem;
+  }
+  .music-section {
+    padding: 3.5rem 1rem !important;
+  }
+  .section-header {
+    margin-bottom: 1.5rem !important;
+  }
+  .contact-info h3 {
+    text-align: center;
+  }
+  .contact-info p {
+    text-align: center;
+  }
+  .contact-details {
+    align-items: center;
+  }
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+  }
+}
+
+/* Project card without image still looks good */
+.project-card .project-image {
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #1a1a20, #121218);
+  font-size: 2rem;
+  color: #7a889c;
 }

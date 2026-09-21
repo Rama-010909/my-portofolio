@@ -219,20 +219,16 @@
         <div class="card">
           <h3>Social Media Links</h3>
           <div class="form-group">
-            <label>WhatsApp (contoh: https://wa.me/6281234567890)</label>
-            <input type="url" id="editSocialWa" placeholder="https://wa.me/62...">
-          </div>
-          <div class="form-group">
             <label>Instagram</label>
-            <input type="url" id="editSocialIg" placeholder="https://instagram.com/username">
+            <input type="url" id="editSocialIg" placeholder="https://instagram.com/vrnjrzkyramadhn">
           </div>
           <div class="form-group">
             <label>TikTok</label>
-            <input type="url" id="editSocialTt" placeholder="https://tiktok.com/@username">
+            <input type="url" id="editSocialTt" placeholder="https://www.tiktok.com/@vrnjrzkyramadhn">
           </div>
           <div class="form-group">
             <label>GitHub</label>
-            <input type="url" id="editSocialGh" placeholder="https://github.com/username">
+            <input type="url" id="editSocialGh" placeholder="https://github.com/Rama-010909">
           </div>
         </div>
         <div class="card">
@@ -292,27 +288,32 @@
         <div class="card">
           <h3>Cloud Sync (simpan lintas perangkat)</h3>
           <p style="color:var(--text3);font-size:0.9rem;margin-bottom:1rem;">
-            Isi URL Firebase Realtime Database supaya data & foto profil sama di HP dan komputer.
-            Panduan singkat ada di bawah form.
+            Paste URL Firebase Realtime Database (production). Data & foto sync ke semua perangkat dan pengunjung publik.
           </p>
           <div class="form-group">
             <label>Firebase Database URL</label>
             <input type="url" id="editCloudUrl" placeholder="https://NAMA-PROJECT-default-rtdb.asia-southeast1.firebasedatabase.app">
           </div>
           <div class="form-group">
-            <label>Path data (opsional)</label>
-            <input type="text" id="editCloudPath" placeholder="ramzz" value="ramzz">
+            <label>Path data</label>
+            <input type="text" id="editCloudPath" placeholder="ramzz">
           </div>
-          <button type="button" class="btn btn-outline" id="testCloudBtn">
-            <i class="fas fa-cloud"></i> Test & Ambil Data Cloud
-          </button>
-          <div class="cloud-help" style="margin-top:1.2rem;padding:1rem;background:rgba(0,0,0,0.25);border-radius:12px;font-size:0.85rem;color:var(--text2);line-height:1.6;">
-            <strong style="color:var(--cyan);">Cara setup gratis (sekali saja):</strong><br>
-            1. Buka <a href="https://console.firebase.google.com" target="_blank" rel="noopener" style="color:var(--cyan);">console.firebase.google.com</a><br>
-            2. Create project → Build → <strong>Realtime Database</strong> → Create Database → Start in <strong>test mode</strong><br>
-            3. Copy URL database (contoh: https://xxx-default-rtdb.asia-southeast1.firebasedatabase.app)<br>
-            4. Paste di atas → Simpan Semua<br>
-            5. Rules test mode biasanya aktif 30 hari; untuk portfolio pribadi bisa set read/write true
+          <div class="cloud-help" style="margin-top:1rem;padding:1rem;background:rgba(0,0,0,0.25);border-radius:12px;font-size:0.82rem;color:var(--text2);line-height:1.65;">
+            <strong style="color:var(--cyan);">Setup production (bukan test mode):</strong><br>
+            1. Firebase Console → Realtime Database → buat database mode <strong>production</strong><br>
+            2. Tab <strong>Rules</strong> → paste rules di bawah → Publish<br>
+            3. Copy Database URL → paste di form ini → Simpan Semua<br><br>
+            <code style="display:block;background:rgba(0,0,0,0.35);padding:0.75rem;border-radius:8px;white-space:pre;overflow-x:auto;color:#c8d0dc;font-size:0.78rem;">{
+  "rules": {
+    "ramzz": {
+      ".read": true,
+      ".write": true
+    },
+    ".read": false,
+    ".write": false
+  }
+}</code>
+            <span style="opacity:0.85;">Hanya path <strong>ramzz</strong> yang bisa dibaca/ditulis. Root database tetap terkunci.</span>
           </div>
         </div>
         <div class="card">
@@ -379,15 +380,16 @@
           <input type="text" id="editProjectTags" placeholder="React, Node, Canva">
         </div>
         <div class="form-group">
-          <label>Link Project (URL website / Canva)</label>
-          <input type="url" id="editProjectLink" placeholder="https://...">
+          <label>Link Project (wajib — website / Canva / dll)</label>
+          <input type="url" id="editProjectLink" placeholder="https://..." required>
+          <small style="color:var(--text3);font-size:0.8rem;">Cukup isi link. Foto opsional, tidak wajib.</small>
         </div>
         <div class="form-group">
-          <label>Gambar Project</label>
+          <label>Gambar Project (opsional)</label>
           <div class="image-upload-area">
             <div class="image-preview" id="projectImagePreview">
               <i class="fas fa-image"></i>
-              <span>Belum ada gambar</span>
+              <span>Opsional — boleh dikosongkan</span>
             </div>
             <div class="image-upload-btns">
               <label class="btn btn-outline btn-sm">

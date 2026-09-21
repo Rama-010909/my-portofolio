@@ -30,11 +30,23 @@ portfolio-website/
 - Setelah edit, klik **Simpan Semua**, lalu refresh index.html
 - Jika login gagal, clear Local Storage key `ramzzPortfolio` di browser (F12 → Application)
 
-## Cloud Sync (foto & data lintas perangkat)
+## Cloud Sync (production)
 
-1. Buka https://console.firebase.google.com → buat project
-2. Build → Realtime Database → Create → **test mode**
-3. Copy Database URL
-4. Login admin → **Settings** → paste URL → Simpan Semua
-5. Upload foto profil → Simpan Semua
-6. Buka website di HP/PC lain → data & foto ikut terbawa
+1. Firebase Console → Realtime Database → create in **production mode** (bukan test mode)
+2. Rules → Publish:
+
+```json
+{
+  "rules": {
+    "ramzz": {
+      ".read": true,
+      ".write": true
+    },
+    ".read": false,
+    ".write": false
+  }
+}
+```
+
+3. Copy Database URL → Admin → Settings → paste → Simpan Semua
+4. Upload foto / edit konten → Simpan Semua (otomatis ke cloud)
