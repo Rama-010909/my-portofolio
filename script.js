@@ -6,6 +6,9 @@ const STORAGE_KEY = "ramzzPortfolio";
 
 const defaultData = {
   displayName: "Rama",
+  welcomeLine: "Halo,",
+  welcomeName: "Welcome to RAMZZ",
+  welcomeSub: "Portfolio & Creative Space",
   jobTitle: "Full-Stack Developer & Creative Technologist",
   profilePhoto: "",
   heroSubtitle: "Full-Stack Developer & Creative Technologist specializing in immersive web experiences.",
@@ -49,14 +52,34 @@ function loadData() {
 
 let data = loadData();
 
+// Apply welcome text to loader immediately
+(function applyWelcome() {
+  const line = document.getElementById("welcomeLine1");
+  const name = document.getElementById("welcomeName");
+  const sub = document.getElementById("welcomeSub");
+  if (line && data.welcomeLine) line.textContent = data.welcomeLine;
+  if (name && data.welcomeName) name.textContent = data.welcomeName;
+  if (sub && data.welcomeSub) sub.textContent = data.welcomeSub;
+})();
+
+
 function $(sel) { return document.querySelector(sel); }
 function $$(sel) { return document.querySelectorAll(sel); }
 
 window.addEventListener("load", () => {
+  const bar = document.getElementById("loaderBar");
+  let progress = 0;
+  const tick = setInterval(() => {
+    progress += Math.random() * 18 + 8;
+    if (progress > 100) progress = 100;
+    if (bar) bar.style.width = progress + "%";
+    if (progress >= 100) clearInterval(tick);
+  }, 280);
+
   setTimeout(() => {
     $("#loader")?.classList.add("hidden");
     initApp();
-  }, 2000);
+  }, 3200);
 });
 
 function initApp() {
@@ -362,41 +385,41 @@ function initFilters() {
 }
 
 
-// ========== MUSIC PLAYER ==========
+// ========== MUSIC / FAVORITE SONG ==========
 function initMusic() {
   const audio = document.getElementById("bgMusic");
+  const card = document.getElementById("favSong");
   const btn = document.getElementById("musicToggle");
   const icon = document.getElementById("musicIcon");
-  const bars = document.getElementById("musicBars");
   if (!audio || !btn) return;
 
   let playing = false;
+
+  const setPlaying = (on) => {
+    playing = on;
+    card?.classList.toggle("playing", on);
+    if (icon) icon.className = on ? "fas fa-pause" : "fas fa-play";
+  };
 
   btn.addEventListener("click", async () => {
     try {
       if (playing) {
         audio.pause();
-        icon.className = "fas fa-play";
-        bars?.classList.remove("playing");
-        playing = false;
+        setPlaying(false);
       } else {
         await audio.play();
-        icon.className = "fas fa-pause";
-        bars?.classList.add("playing");
-        playing = true;
+        setPlaying(true);
       }
     } catch (err) {
-      // File missing or autoplay blocked
-      alert("File lagu belum ada.\n\nTaruh file \"about-you.mp3\" di folder yang sama dengan index.html, lalu refresh.");
+      alert("File lagu belum ditemukan.
+Pastikan about-you.mp3 ada di folder yang sama.");
       console.warn("Music error:", err);
     }
   });
 
-  audio.addEventListener("ended", () => {
-    icon.className = "fas fa-play";
-    bars?.classList.remove("playing");
-    playing = false;
-  });
+  audio.addEventListener("ended", () => setPlaying(false));
+  audio.addEventListener("pause", () => { if (!audio.ended) setPlaying(false); });
+  audio.addEventListener("play", () => setPlaying(true));
 }
 
 function initContactForm() {

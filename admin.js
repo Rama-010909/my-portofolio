@@ -7,6 +7,9 @@ const AUTH_KEY = "ramzzAdminAuth";
 
 const defaultData = {
   displayName: "Rama",
+  welcomeLine: "Halo,",
+  welcomeName: "Welcome to RAMZZ",
+  welcomeSub: "Portfolio & Creative Space",
   jobTitle: "Full-Stack Developer & Creative Technologist",
   profilePhoto: "",
   heroSubtitle: "Full-Stack Developer & Creative Technologist specializing in immersive web experiences.",
@@ -290,6 +293,9 @@ function populateAll() {
   renderProfilePreview();
 
   // Content
+  document.getElementById("editWelcomeLine").value = data.welcomeLine || "Halo,";
+  document.getElementById("editWelcomeName").value = data.welcomeName || "Welcome to RAMZZ";
+  document.getElementById("editWelcomeSub").value = data.welcomeSub || "Portfolio & Creative Space";
   document.getElementById("editHeroSubtitle").value = data.heroSubtitle || "";
   document.getElementById("editAboutTitle").value = data.aboutTitle || "";
   document.getElementById("editAboutText").value = data.aboutText || "";
@@ -542,6 +548,9 @@ function deleteExp(i) {
 function saveAll() {
   data.displayName = document.getElementById("editDisplayName").value.trim();
   data.jobTitle = document.getElementById("editJobTitle").value.trim();
+  data.welcomeLine = document.getElementById("editWelcomeLine").value.trim();
+  data.welcomeName = document.getElementById("editWelcomeName").value.trim();
+  data.welcomeSub = document.getElementById("editWelcomeSub").value.trim();
   data.heroSubtitle = document.getElementById("editHeroSubtitle").value.trim();
   data.aboutTitle = document.getElementById("editAboutTitle").value.trim();
   data.aboutText = document.getElementById("editAboutText").value.trim();

@@ -21,11 +21,19 @@
   <!-- Loading Screen -->
   <div id="loader">
     <div class="loader-content">
-      <div class="loader-ring"></div>
-      <div class="loader-ring"></div>
-      <div class="loader-ring"></div>
-      <h2 class="loader-text">RAMZZ</h2>
-      <p class="loader-sub">Initializing Universe...</p>
+      <div class="loader-rings">
+        <div class="loader-ring"></div>
+        <div class="loader-ring"></div>
+        <div class="loader-ring"></div>
+      </div>
+      <div class="welcome-text">
+        <p class="welcome-line" id="welcomeLine1">Halo,</p>
+        <h2 class="welcome-name" id="welcomeName">Welcome to RAMZZ</h2>
+        <p class="welcome-sub" id="welcomeSub">Portfolio & Creative Space</p>
+      </div>
+      <div class="loader-progress">
+        <div class="loader-bar" id="loaderBar"></div>
+      </div>
     </div>
   </div>
 
@@ -259,26 +267,30 @@
       <p class="copyright">© 2026 Ramzz. All rights reserved.</p>
     </div>
   </footer>
-
-
-
-  <!-- Music Player -->
-  <div class="music-player" id="musicPlayer">
-    <button class="music-btn" id="musicToggle" title="Play / Pause">
-      <i class="fas fa-play" id="musicIcon"></i>
-    </button>
-    <div class="music-info">
-      <span class="music-title">About You</span>
-      <span class="music-artist">The 1975</span>
+  <!-- Favorite Song -->
+  <div class="fav-song" id="favSong">
+    <div class="fav-cover" id="musicToggle" title="Play / Pause">
+      <div class="fav-cover-art">
+        <i class="fas fa-music"></i>
+      </div>
+      <div class="fav-play-overlay">
+        <i class="fas fa-play" id="musicIcon"></i>
+      </div>
+      <div class="fav-vinyl" id="favVinyl"></div>
     </div>
-    <div class="music-bars" id="musicBars">
-      <span></span><span></span><span></span><span></span>
+    <div class="fav-meta">
+      <span class="fav-label">Favorite Song</span>
+      <span class="fav-title">About You</span>
+      <span class="fav-artist">The 1975</span>
+    </div>
+    <div class="fav-bars" id="musicBars">
+      <span></span><span></span><span></span><span></span><span></span>
     </div>
   </div>
   <audio id="bgMusic" loop preload="metadata">
     <source src="about-you.mp3" type="audio/mpeg">
   </audio>
 
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
