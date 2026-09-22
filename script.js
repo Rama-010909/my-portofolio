@@ -2,7 +2,8 @@
    RAMZZ PORTFOLIO - Main Page Engine
 ======================================== */
 
-const STORAGE_KEY = "ramzzPortfolio";
+const FIREBASE_URL = "https://my-portofolio-rama-default-rtdb.asia-southeast1.firebasedatabase.app";
+const FIREBASE_PATH = "ramzz";
 
 const defaultData = {
   displayName: "Rama",
@@ -19,8 +20,8 @@ const defaultData = {
   socialIg: "https://instagram.com/vrnjrzkyramadhn",
   socialTt: "https://www.tiktok.com/@vrnjrzkyramadhn",
   socialGh: "https://github.com/Rama-010909",
-  cloudUrl: "",
-  cloudPath: "ramzz",
+  cloudUrl: FIREBASE_URL,
+  cloudPath: FIREBASE_PATH,
   stats: { projects: 50, years: 5, clients: 30 },
   skills: [
     { name: "JavaScript", icon: "fab fa-js", level: 95 },
@@ -48,20 +49,13 @@ const defaultData = {
 };
 
 function loadData() {
-  try {
-
-    if (raw) return { ...structuredClone(defaultData), ...JSON.parse(raw) };
-  } catch (e) {}
   return structuredClone(defaultData);
 }
 
 let data = loadData();
 
 function getCloudEndpoint() {
-  const base = (data.cloudUrl || "").replace(/\/$/, "");
-  if (!base) return null;
-  const path = (data.cloudPath || "ramzz").replace(/^\/|\/$/g, "") || "ramzz";
-  return base + "/" + path + ".json";
+  return FIREBASE_URL.replace(/\\/+$/, "") + "/" + FIREBASE_PATH + ".json";
 }
 
 async function pullCloudData() {
@@ -72,8 +66,7 @@ async function pullCloudData() {
     if (!res.ok) return false;
     const remote = await res.json();
     if (remote && typeof remote === "object") {
-      data = { ...structuredClone(defaultData), ...remote };
-
+      data = { ...structuredClone(defaultData), ...remote, cloudUrl: FIREBASE_URL, cloudPath: FIREBASE_PATH };
       return true;
     }
   } catch (e) {

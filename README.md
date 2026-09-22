@@ -52,7 +52,6 @@ portfolio-website/
 4. Upload foto / edit konten → Simpan Semua (otomatis ke cloud)
 
 ## Firebase Realtime Database
-Portfolio data sekarang menggunakan Firebase Realtime Database sebagai penyimpanan utama.
-Database URL: https://my-portofolio-rama-default-rtdb.asia-southeast1.firebasedatabase.app
-Path: /ramzz
-Data portfolio tidak menggunakan localStorage sebagai database.
+Database utama: `https://my-portofolio-rama-default-rtdb.asia-southeast1.firebasedatabase.app/ramzz`.
+Portfolio tidak menggunakan localStorage sebagai penyimpanan data.
+Tombol **Simpan Semua** mengirim seluruh data portfolio dengan HTTP PUT ke Firebase Realtime Database.

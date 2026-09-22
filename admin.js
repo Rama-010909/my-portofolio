@@ -2,7 +2,8 @@
    RAMZZ ADMIN PANEL
 ======================================== */
 
-const STORAGE_KEY = "ramzzPortfolio";
+const FIREBASE_URL = "https://my-portofolio-rama-default-rtdb.asia-southeast1.firebasedatabase.app";
+const FIREBASE_PATH = "ramzz";
 const AUTH_KEY = "ramzzAdminAuth";
 
 const defaultData = {
@@ -20,8 +21,8 @@ const defaultData = {
   socialIg: "https://instagram.com/vrnjrzkyramadhn",
   socialTt: "https://www.tiktok.com/@vrnjrzkyramadhn",
   socialGh: "https://github.com/Rama-010909",
-  cloudUrl: "",
-  cloudPath: "ramzz",
+  cloudUrl: FIREBASE_URL,
+  cloudPath: FIREBASE_PATH,
   stats: { projects: 50, years: 5, clients: 30 },
   skills: [
     { name: "JavaScript", icon: "fab fa-js", level: 95 },
@@ -119,73 +120,49 @@ let data = loadData();
 let tempProjectImage = "";
 
 function loadData() {
-  try {
-
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      // Merge with defaults for any missing keys
-      return { ...structuredClone(defaultData), ...parsed };
-    }
-  } catch (e) {}
   return structuredClone(defaultData);
 }
 
-async function saveData() {
-  return await cloudSave();
-}
-
-
-function getCloudEndpoint() {
-  const base = (data.cloudUrl || "").replace(/\/$/, "");
-  if (!base) return null;
-  const path = (data.cloudPath || "ramzz").replace(/^\/|\/$/g, "") || "ramzz";
-  return base + "/" + path + ".json";
-}
-
-async function cloudSave() {
-  const urlInput = document.getElementById("editCloudUrl");
-  const pathInput = document.getElementById("editCloudPath");
-  const baseUrl = (urlInput?.value || FIREBASE_URL).trim().replace(/\/+$/, "");
-  const path = (pathInput?.value || FIREBASE_PATH).trim().replace(/^\/+|\/+$/g, "");
-
-  data.cloudUrl = baseUrl;
-  data.cloudPath = path;
-
-  const response = await fetch(`${baseUrl}/${path}.json`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  });
-
-  if (!response.ok) {
-    throw new Error(`Firebase HTTP ${response.status}`);
-  }
-
-  const saved = await response.json();
-  data = saved || data;
-  showToast("Perubahan berhasil disimpan ke Firebase", "success");
+function saveData() {
+  // Portfolio data is stored in Firebase only.
   return true;
 }
 
-async function cloudLoad() {
-  const baseUrl = (data.cloudUrl || FIREBASE_URL).trim().replace(/\/+$/, "");
-  const path = (data.cloudPath || FIREBASE_PATH).trim().replace(/^\/+|\/+$/g, "");
+function getCloudEndpoint() {
+  const base = (data.cloudUrl || FIREBASE_URL).trim().replace(/\\/+$/, "");
+  const path = (data.cloudPath || FIREBASE_PATH).trim().replace(/^\\/+|\\/+$/g, "");
+  return base + "/" + (path || FIREBASE_PATH) + ".json";
+}
 
-  const response = await fetch(`${baseUrl}/${path}.json`, {
-    method: "GET",
-    cache: "no-store"
-  });
-
-  if (!response.ok) {
-    throw new Error(`Firebase HTTP ${response.status}`);
+async function cloudSave() {
+  const url = getCloudEndpoint();
+  try {
+    const res = await fetch(url, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+      cache: "no-store"
+    });
+    const body = await res.text();
+    if (!res.ok) throw new Error("HTTP " + res.status + (body ? " - " + body : ""));
+    return { ok: true };
+  } catch (e) {
+    console.error("Firebase save failed:", e);
+    return { ok: false, error: e.message };
   }
+}
 
-  const remote = await response.json();
-  if (remote && typeof remote === "object") {
-    data = remote;
-    data.cloudUrl = baseUrl;
-    data.cloudPath = path;
-    return data;
+async function cloudLoad() {
+  const url = getCloudEndpoint();
+  try {
+    const res = await fetch(url, { cache: "no-store" });
+    const body = await res.text();
+    if (!res.ok) throw new Error("HTTP " + res.status + (body ? " - " + body : ""));
+    if (!body || body === "null") return null;
+    const remote = JSON.parse(body);
+    if (remote && typeof remote === "object") return remote;
+  } catch (e) {
+    console.error("Firebase load failed:", e);
   }
   return null;
 }
@@ -253,16 +230,13 @@ function showLogin() {
 async function showDashboard() {
   document.getElementById("loginScreen").style.display = "none";
   document.getElementById("adminDashboard").style.display = "flex";
-  // Try pull from cloud if configured
-  if (data.cloudUrl) {
-    const remote = await cloudLoad();
-    if (remote) {
-      data = { ...structuredClone(defaultData), ...remote };
-      // keep credentials if remote missing them
-      if (!data.credentials) data.credentials = defaultData.credentials;
-      saveData();
-      /* cloud merged silently */
-    }
+  // Always load the portfolio from Firebase.
+  const remote = await cloudLoad();
+  if (remote) {
+    data = { ...structuredClone(defaultData), ...remote };
+    data.cloudUrl = FIREBASE_URL;
+    data.cloudPath = FIREBASE_PATH;
+    if (!data.credentials) data.credentials = defaultData.credentials;
   }
   populateAll();
   updateStats();
@@ -366,7 +340,6 @@ function bindEvents() {
     if (u) data.credentials.username = u;
     if (p) data.credentials.password = p;
     if (u || p) {
-      saveData();
       showToast("Credentials berhasil diupdate!");
       document.getElementById("newUsername").value = "";
       document.getElementById("newPassword").value = "";
@@ -378,7 +351,6 @@ function bindEvents() {
   document.getElementById("resetDataBtn").addEventListener("click", () => {
     if (confirm("Yakin reset SEMUA data ke default? Foto & project custom akan hilang!")) {
       data = structuredClone(defaultData);
-      saveData();
       populateAll();
       updateStats();
       showToast("Data direset ke default");
@@ -675,14 +647,15 @@ async function saveAll() {
   // cloud config from form
   const cu = document.getElementById("editCloudUrl");
   const cp = document.getElementById("editCloudPath");
-  if (cu) data.cloudUrl = cu.value.trim();
-  if (cp) data.cloudPath = cp.value.trim() || "ramzz";
-
-  saveData();
+  // Keep the configured Firebase database as the source of truth.
+  data.cloudUrl = FIREBASE_URL;
+  data.cloudPath = FIREBASE_PATH;
+  if (cu) cu.value = FIREBASE_URL;
+  if (cp) cp.value = FIREBASE_PATH;
   updateStats();
   const result = await cloudSave();
   if (result.skip) {
-    showToast("Tersimpan. Isi Firebase URL di Settings untuk sync publik.");
+    showToast("Firebase belum dapat diakses.", "error");
   } else if (result.ok) {
     showToast("Berhasil disimpan ke cloud.");
   } else {

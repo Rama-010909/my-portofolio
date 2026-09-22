@@ -127,7 +127,7 @@
           <ul class="tips-list">
             <li><i class="fas fa-check"></i> Upload foto profil di menu <strong>Profil & Foto</strong></li>
             <li><i class="fas fa-check"></i> Tambah/edit/hapus project lengkap dengan gambar di menu <strong>Projects</strong></li>
-            <li><i class="fas fa-check"></i> Semua perubahan disimpan di browser (localStorage)</li>
+            <li><i class="fas fa-check"></i> Semua perubahan disimpan langsung ke Firebase Realtime Database</li>
             <li><i class="fas fa-check"></i> Klik <strong>Simpan Semua</strong> setelah edit, lalu buka website untuk melihat hasil</li>
           </ul>
         </div>
@@ -302,7 +302,7 @@
             <strong style="color:var(--cyan);">Setup production (bukan test mode):</strong><br>
             1. Firebase Console → Realtime Database → buat database mode <strong>production</strong><br>
             2. Tab <strong>Rules</strong> → paste rules di bawah → Publish<br>
-            3. Copy Database URL → paste di form ini → Simpan Semua<br><br>
+            3. Database sudah terhubung otomatis → klik Simpan Semua untuk menyimpan perubahan<br><br>
             <code style="display:block;background:rgba(0,0,0,0.35);padding:0.75rem;border-radius:8px;white-space:pre;overflow-x:auto;color:#c8d0dc;font-size:0.78rem;">{
   "rules": {
     "ramzz": {
