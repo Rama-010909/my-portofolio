@@ -120,7 +120,7 @@ let tempProjectImage = "";
 
 function loadData() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+
     if (raw) {
       const parsed = JSON.parse(raw);
       // Merge with defaults for any missing keys
@@ -130,8 +130,8 @@ function loadData() {
   return structuredClone(defaultData);
 }
 
-function saveData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+async function saveData() {
+  return await cloudSave();
 }
 
 
@@ -143,32 +143,49 @@ function getCloudEndpoint() {
 }
 
 async function cloudSave() {
-  const url = getCloudEndpoint();
-  if (!url) return { ok: false, skip: true };
-  try {
-    const res = await fetch(url, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    return { ok: true };
-  } catch (e) {
-    console.error("cloudSave", e);
-    return { ok: false, error: e.message };
+  const urlInput = document.getElementById("editCloudUrl");
+  const pathInput = document.getElementById("editCloudPath");
+  const baseUrl = (urlInput?.value || FIREBASE_URL).trim().replace(/\/+$/, "");
+  const path = (pathInput?.value || FIREBASE_PATH).trim().replace(/^\/+|\/+$/g, "");
+
+  data.cloudUrl = baseUrl;
+  data.cloudPath = path;
+
+  const response = await fetch(`${baseUrl}/${path}.json`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  if (!response.ok) {
+    throw new Error(`Firebase HTTP ${response.status}`);
   }
+
+  const saved = await response.json();
+  data = saved || data;
+  showToast("Perubahan berhasil disimpan ke Firebase", "success");
+  return true;
 }
 
 async function cloudLoad() {
-  const url = getCloudEndpoint();
-  if (!url) return null;
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const remote = await res.json();
-    if (remote && typeof remote === "object") return remote;
-  } catch (e) {
-    console.error("cloudLoad", e);
+  const baseUrl = (data.cloudUrl || FIREBASE_URL).trim().replace(/\/+$/, "");
+  const path = (data.cloudPath || FIREBASE_PATH).trim().replace(/^\/+|\/+$/g, "");
+
+  const response = await fetch(`${baseUrl}/${path}.json`, {
+    method: "GET",
+    cache: "no-store"
+  });
+
+  if (!response.ok) {
+    throw new Error(`Firebase HTTP ${response.status}`);
+  }
+
+  const remote = await response.json();
+  if (remote && typeof remote === "object") {
+    data = remote;
+    data.cloudUrl = baseUrl;
+    data.cloudPath = path;
+    return data;
   }
   return null;
 }

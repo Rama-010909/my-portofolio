@@ -49,7 +49,7 @@ const defaultData = {
 
 function loadData() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+
     if (raw) return { ...structuredClone(defaultData), ...JSON.parse(raw) };
   } catch (e) {}
   return structuredClone(defaultData);
@@ -73,7 +73,7 @@ async function pullCloudData() {
     const remote = await res.json();
     if (remote && typeof remote === "object") {
       data = { ...structuredClone(defaultData), ...remote };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
       return true;
     }
   } catch (e) {
