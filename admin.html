@@ -286,37 +286,6 @@
       <!-- SETTINGS -->
       <section id="sec-settings" class="section">
         <div class="card">
-          <h3>Cloud Sync (simpan lintas perangkat)</h3>
-          <p style="color:var(--text3);font-size:0.9rem;margin-bottom:1rem;">
-            Paste URL Firebase Realtime Database (production). Data & foto sync ke semua perangkat dan pengunjung publik.
-          </p>
-          <div class="form-group">
-            <label>Firebase Database URL</label>
-            <input type="url" id="editCloudUrl" placeholder="https://NAMA-PROJECT-default-rtdb.asia-southeast1.firebasedatabase.app">
-          </div>
-          <div class="form-group">
-            <label>Path data</label>
-            <input type="text" id="editCloudPath" placeholder="ramzz">
-          </div>
-          <div class="cloud-help" style="margin-top:1rem;padding:1rem;background:rgba(0,0,0,0.25);border-radius:12px;font-size:0.82rem;color:var(--text2);line-height:1.65;">
-            <strong style="color:var(--cyan);">Setup production (bukan test mode):</strong><br>
-            1. Firebase Console → Realtime Database → buat database mode <strong>production</strong><br>
-            2. Tab <strong>Rules</strong> → paste rules di bawah → Publish<br>
-            3. Database sudah terhubung otomatis → klik Simpan Semua untuk menyimpan perubahan<br><br>
-            <code style="display:block;background:rgba(0,0,0,0.35);padding:0.75rem;border-radius:8px;white-space:pre;overflow-x:auto;color:#c8d0dc;font-size:0.78rem;">{
-  "rules": {
-    "ramzz": {
-      ".read": true,
-      ".write": true
-    },
-    ".read": false,
-    ".write": false
-  }
-}</code>
-            <span style="opacity:0.85;">Hanya path <strong>ramzz</strong> yang bisa dibaca/ditulis. Root database tetap terkunci.</span>
-          </div>
-        </div>
-        <div class="card">
           <h3>Ganti Username & Password</h3>
           <div class="form-row">
             <div class="form-group">

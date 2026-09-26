@@ -25,14 +25,15 @@ const defaultData = {
   cloudPath: FIREBASE_PATH,
   stats: { projects: 50, years: 5, clients: 30 },
   skills: [
-    { name: "JavaScript", icon: "fab fa-js", level: 95 },
-    { name: "React / Next.js", icon: "fab fa-react", level: 90 },
-    { name: "Node.js", icon: "fab fa-node-js", level: 85 },
-    { name: "Python", icon: "fab fa-python", level: 80 },
-    { name: "UI/UX Design", icon: "fas fa-pencil-ruler", level: 88 },
-    { name: "Three.js / WebGL", icon: "fas fa-cube", level: 75 },
-    { name: "CSS / Animation", icon: "fab fa-css3-alt", level: 92 },
-    { name: "TypeScript", icon: "fas fa-code", level: 85 }
+    { name: "Canva", icon: "fas fa-palette", level: 92 },
+    { name: "MikroTik", icon: "fas fa-network-wired", level: 88 },
+    { name: "Komputer & PC", icon: "fas fa-desktop", level: 90 },
+    { name: "HTML", icon: "fab fa-html5", level: 94 },
+    { name: "CSS", icon: "fab fa-css3-alt", level: 92 },
+    { name: "JavaScript", icon: "fab fa-js", level: 88 },
+    { name: "Website & Aplikasi", icon: "fas fa-laptop-code", level: 90 },
+    { name: "Web Design", icon: "fas fa-pen-ruler", level: 93 },
+    { name: "Problem Solving", icon: "fas fa-lightbulb", level: 91 }
   ],
   projects: [
     {
@@ -136,44 +137,35 @@ function getCloudEndpoint() {
 
 async function cloudSave() {
   const url = getCloudEndpoint();
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 10000);
   try {
     const res = await fetch(url, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
-      cache: "no-store",
-      signal: controller.signal
+      cache: "no-store"
     });
     const body = await res.text();
     if (!res.ok) throw new Error("HTTP " + res.status + (body ? " - " + body : ""));
     return { ok: true };
   } catch (e) {
     console.error("Firebase save failed:", e);
-    return { ok: false, error: e.name === "AbortError" ? "Koneksi Firebase timeout" : e.message };
-  } finally {
-    clearTimeout(timer);
+    return { ok: false, error: e.message };
   }
 }
 
 async function cloudLoad() {
   const url = getCloudEndpoint();
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 8000);
   try {
-    const res = await fetch(url, { cache: "no-store", signal: controller.signal });
+    const res = await fetch(url, { cache: "no-store" });
     const body = await res.text();
     if (!res.ok) throw new Error("HTTP " + res.status + (body ? " - " + body : ""));
     if (!body || body === "null") return null;
     const remote = JSON.parse(body);
-    return remote && typeof remote === "object" ? remote : null;
+    if (remote && typeof remote === "object") return remote;
   } catch (e) {
     console.error("Firebase load failed:", e);
-    return null;
-  } finally {
-    clearTimeout(timer);
   }
+  return null;
 }
 
 function compressImage(file, maxEdge = 900, quality = 0.72) {
@@ -239,25 +231,16 @@ function showLogin() {
 async function showDashboard() {
   document.getElementById("loginScreen").style.display = "none";
   document.getElementById("adminDashboard").style.display = "flex";
-
-  // Render immediately so the admin page never gets stuck waiting for Firebase.
-  populateAll();
-  updateStats();
-
-  // Then load the latest Firebase data in the background.
+  // Always load the portfolio from Firebase.
   const remote = await cloudLoad();
   if (remote) {
     data = { ...structuredClone(defaultData), ...remote };
     data.cloudUrl = FIREBASE_URL;
     data.cloudPath = FIREBASE_PATH;
-    data.stats = { ...defaultData.stats, ...(remote.stats || {}) };
-    data.skills = Array.isArray(remote.skills) ? remote.skills : defaultData.skills;
-    data.projects = Array.isArray(remote.projects) ? remote.projects : defaultData.projects;
-    data.experience = Array.isArray(remote.experience) ? remote.experience : defaultData.experience;
-    data.credentials = { ...defaultData.credentials, ...(remote.credentials || {}) };
-    populateAll();
-    updateStats();
+    if (!data.credentials) data.credentials = defaultData.credentials;
   }
+  populateAll();
+  updateStats();
 }
 
 function bindEvents() {
@@ -436,7 +419,7 @@ async function handleProfileUpload(e) {
     showToast("Mengompres foto...");
     data.profilePhoto = await compressImage(file, 900, 0.72);
     renderProfilePreview();
-    showToast("Foto siap — klik Simpan Semua (akan sync ke cloud jika URL sudah diisi)");
+    showToast("Foto siap — klik Simpan Semua untuk menyimpan");
   } catch (err) {
     showToast("Gagal proses foto", "error");
   }
@@ -644,16 +627,7 @@ function deleteExp(i) {
 
 // ========== SAVE ALL ==========
 async function saveAll() {
-  const saveButton = document.getElementById("saveBtn");
-  if (saveButton?.disabled) return;
-  if (saveButton) {
-    saveButton.disabled = true;
-    saveButton.dataset.originalText = saveButton.textContent;
-    saveButton.textContent = "Menyimpan...";
-  }
-
-  try {
-    data.displayName = document.getElementById("editDisplayName").value.trim();
+  data.displayName = document.getElementById("editDisplayName").value.trim();
   data.jobTitle = document.getElementById("editJobTitle").value.trim();
   data.welcomeLine = document.getElementById("editWelcomeLine").value.trim();
   data.welcomeName = document.getElementById("editWelcomeName").value.trim();
@@ -671,26 +645,17 @@ async function saveAll() {
     years: +document.getElementById("editStatYears").value || 0,
     clients: +document.getElementById("editStatClients").value || 0
   };
-  // cloud config from form
-  const cu = document.getElementById("editCloudUrl");
-  const cp = document.getElementById("editCloudPath");
-  // Keep the configured Firebase database as the source of truth.
+  // Firebase is configured internally; no Cloud Sync form is shown in Settings.
   data.cloudUrl = FIREBASE_URL;
   data.cloudPath = FIREBASE_PATH;
-  if (cu) cu.value = FIREBASE_URL;
-  if (cp) cp.value = FIREBASE_PATH;
   updateStats();
   const result = await cloudSave();
-  if (result.ok) {
-    showToast("Berhasil disimpan ke Firebase.");
+  if (result.skip) {
+    showToast("Firebase belum dapat diakses.", "error");
+  } else if (result.ok) {
+    showToast("Berhasil disimpan ke cloud.");
   } else {
-    showToast("Gagal menyimpan: " + (result.error || "cek koneksi / Rules Firebase"), "error");
-  }
-  } finally {
-    if (saveButton) {
-      saveButton.disabled = false;
-      saveButton.textContent = saveButton.dataset.originalText || "Simpan Semua";
-    }
+    showToast("Gagal sync cloud: " + (result.error || "cek URL / rules Firebase"), "error");
   }
 }
 

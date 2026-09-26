@@ -24,14 +24,15 @@ const defaultData = {
   cloudPath: FIREBASE_PATH,
   stats: { projects: 50, years: 5, clients: 30 },
   skills: [
-    { name: "JavaScript", icon: "fab fa-js", level: 95 },
-    { name: "React / Next.js", icon: "fab fa-react", level: 90 },
-    { name: "Node.js", icon: "fab fa-node-js", level: 85 },
-    { name: "Python", icon: "fab fa-python", level: 80 },
-    { name: "UI/UX Design", icon: "fas fa-pencil-ruler", level: 88 },
-    { name: "Three.js / WebGL", icon: "fas fa-cube", level: 75 },
-    { name: "CSS / Animation", icon: "fab fa-css3-alt", level: 92 },
-    { name: "TypeScript", icon: "fas fa-code", level: 85 }
+    { name: "Canva", icon: "fas fa-palette", level: 92 },
+    { name: "MikroTik", icon: "fas fa-network-wired", level: 88 },
+    { name: "Komputer & PC", icon: "fas fa-desktop", level: 90 },
+    { name: "HTML", icon: "fab fa-html5", level: 94 },
+    { name: "CSS", icon: "fab fa-css3-alt", level: 92 },
+    { name: "JavaScript", icon: "fab fa-js", level: 88 },
+    { name: "Website & Aplikasi", icon: "fas fa-laptop-code", level: 90 },
+    { name: "Web Design", icon: "fas fa-pen-ruler", level: 93 },
+    { name: "Problem Solving", icon: "fas fa-lightbulb", level: 91 }
   ],
   projects: [
     { id: 1, title: "Nebula Commerce", category: "web", desc: "Immersive e-commerce platform with 3D product previews and AI recommendations.", tags: ["React", "Three.js", "Node"], icon: "fas fa-shopping-bag", image: "", link: "" },
@@ -260,23 +261,35 @@ function initNavbar() {
   const links = $$(".nav-link");
   const menuToggle = $("#menuToggle");
   const mobileMenu = $("#mobileMenu");
+  const shortcuts = $$(".section-shortcut");
+
+  const updateActiveSection = () => {
+    const sections = $$("section[id]");
+    let current = "home";
+    const marker = window.scrollY + Math.min(220, window.innerHeight * 0.32);
+    sections.forEach((sec) => {
+      if (marker >= sec.offsetTop) current = sec.getAttribute("id");
+    });
+    links.forEach((link) => link.classList.toggle("active", link.getAttribute("href") === `#${current}`));
+    shortcuts.forEach((link) => link.classList.toggle("active", link.dataset.section === current));
+  };
 
   window.addEventListener("scroll", () => {
     navbar?.classList.toggle("scrolled", window.scrollY > 50);
-    const sections = $$("section[id]");
-    let current = "";
-    sections.forEach((sec) => {
-      if (window.scrollY >= sec.offsetTop - 200) current = sec.getAttribute("id");
-    });
-    links.forEach((link) => {
-      link.classList.toggle("active", link.getAttribute("href") === `#${current}`);
-    });
-  });
+    updateActiveSection();
+  }, { passive: true });
 
   menuToggle?.addEventListener("click", () => mobileMenu?.classList.toggle("open"));
   $$(".mobile-link").forEach((link) => {
     link.addEventListener("click", () => mobileMenu?.classList.remove("open"));
   });
+  shortcuts.forEach((link) => {
+    link.addEventListener("click", () => {
+      const target = document.querySelector(link.getAttribute("href"));
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+  updateActiveSection();
 }
 
 function renderContent() {
