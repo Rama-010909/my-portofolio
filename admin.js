@@ -31,7 +31,6 @@ const defaultData = {
     { name: "HTML", icon: "fab fa-html5", level: 94 },
     { name: "CSS", icon: "fab fa-css3-alt", level: 92 },
     { name: "JavaScript", icon: "fab fa-js", level: 88 },
-    { name: "Website & Aplikasi", icon: "fas fa-laptop-code", level: 90 },
     { name: "Web Design", icon: "fas fa-pen-ruler", level: 93 },
     { name: "Problem Solving", icon: "fas fa-lightbulb", level: 91 }
   ],
