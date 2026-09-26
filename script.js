@@ -55,7 +55,7 @@ function loadData() {
 let data = loadData();
 
 function getCloudEndpoint() {
-  return FIREBASE_URL.replace(/\\/+$/, "") + "/" + FIREBASE_PATH + ".json";
+  return FIREBASE_URL.replace(/\/+$/, "") + "/" + FIREBASE_PATH + ".json";
 }
 
 async function pullCloudData() {

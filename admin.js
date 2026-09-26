@@ -129,42 +129,51 @@ function saveData() {
 }
 
 function getCloudEndpoint() {
-  const base = (data.cloudUrl || FIREBASE_URL).trim().replace(/\\/+$/, "");
-  const path = (data.cloudPath || FIREBASE_PATH).trim().replace(/^\\/+|\\/+$/g, "");
+  const base = (data.cloudUrl || FIREBASE_URL).trim().replace(/\/+$/, "");
+  const path = (data.cloudPath || FIREBASE_PATH).trim().replace(/^\/+|\/+$/g, "");
   return base + "/" + (path || FIREBASE_PATH) + ".json";
 }
 
 async function cloudSave() {
   const url = getCloudEndpoint();
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 10000);
   try {
     const res = await fetch(url, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
-      cache: "no-store"
+      cache: "no-store",
+      signal: controller.signal
     });
     const body = await res.text();
     if (!res.ok) throw new Error("HTTP " + res.status + (body ? " - " + body : ""));
     return { ok: true };
   } catch (e) {
     console.error("Firebase save failed:", e);
-    return { ok: false, error: e.message };
+    return { ok: false, error: e.name === "AbortError" ? "Koneksi Firebase timeout" : e.message };
+  } finally {
+    clearTimeout(timer);
   }
 }
 
 async function cloudLoad() {
   const url = getCloudEndpoint();
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 8000);
   try {
-    const res = await fetch(url, { cache: "no-store" });
+    const res = await fetch(url, { cache: "no-store", signal: controller.signal });
     const body = await res.text();
     if (!res.ok) throw new Error("HTTP " + res.status + (body ? " - " + body : ""));
     if (!body || body === "null") return null;
     const remote = JSON.parse(body);
-    if (remote && typeof remote === "object") return remote;
+    return remote && typeof remote === "object" ? remote : null;
   } catch (e) {
     console.error("Firebase load failed:", e);
+    return null;
+  } finally {
+    clearTimeout(timer);
   }
-  return null;
 }
 
 function compressImage(file, maxEdge = 900, quality = 0.72) {
@@ -230,16 +239,25 @@ function showLogin() {
 async function showDashboard() {
   document.getElementById("loginScreen").style.display = "none";
   document.getElementById("adminDashboard").style.display = "flex";
-  // Always load the portfolio from Firebase.
+
+  // Render immediately so the admin page never gets stuck waiting for Firebase.
+  populateAll();
+  updateStats();
+
+  // Then load the latest Firebase data in the background.
   const remote = await cloudLoad();
   if (remote) {
     data = { ...structuredClone(defaultData), ...remote };
     data.cloudUrl = FIREBASE_URL;
     data.cloudPath = FIREBASE_PATH;
-    if (!data.credentials) data.credentials = defaultData.credentials;
+    data.stats = { ...defaultData.stats, ...(remote.stats || {}) };
+    data.skills = Array.isArray(remote.skills) ? remote.skills : defaultData.skills;
+    data.projects = Array.isArray(remote.projects) ? remote.projects : defaultData.projects;
+    data.experience = Array.isArray(remote.experience) ? remote.experience : defaultData.experience;
+    data.credentials = { ...defaultData.credentials, ...(remote.credentials || {}) };
+    populateAll();
+    updateStats();
   }
-  populateAll();
-  updateStats();
 }
 
 function bindEvents() {
@@ -626,7 +644,16 @@ function deleteExp(i) {
 
 // ========== SAVE ALL ==========
 async function saveAll() {
-  data.displayName = document.getElementById("editDisplayName").value.trim();
+  const saveButton = document.getElementById("saveBtn");
+  if (saveButton?.disabled) return;
+  if (saveButton) {
+    saveButton.disabled = true;
+    saveButton.dataset.originalText = saveButton.textContent;
+    saveButton.textContent = "Menyimpan...";
+  }
+
+  try {
+    data.displayName = document.getElementById("editDisplayName").value.trim();
   data.jobTitle = document.getElementById("editJobTitle").value.trim();
   data.welcomeLine = document.getElementById("editWelcomeLine").value.trim();
   data.welcomeName = document.getElementById("editWelcomeName").value.trim();
@@ -654,12 +681,16 @@ async function saveAll() {
   if (cp) cp.value = FIREBASE_PATH;
   updateStats();
   const result = await cloudSave();
-  if (result.skip) {
-    showToast("Firebase belum dapat diakses.", "error");
-  } else if (result.ok) {
-    showToast("Berhasil disimpan ke cloud.");
+  if (result.ok) {
+    showToast("Berhasil disimpan ke Firebase.");
   } else {
-    showToast("Gagal sync cloud: " + (result.error || "cek URL / rules Firebase"), "error");
+    showToast("Gagal menyimpan: " + (result.error || "cek koneksi / Rules Firebase"), "error");
+  }
+  } finally {
+    if (saveButton) {
+      saveButton.disabled = false;
+      saveButton.textContent = saveButton.dataset.originalText || "Simpan Semua";
+    }
   }
 }
 
