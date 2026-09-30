@@ -2417,3 +2417,131 @@ body.admin-page .navbar,body.admin-page .menu-toggle,body.admin-page .mobile-men
   .stat-num{font-size:1.2rem !important;}
   .stat-label{font-size:.68rem !important;}
 }
+
+
+/* ===== MOBILE FINAL: prevent clipping and keep Home balanced ===== */
+html,body{overflow-x:hidden !important;width:100%;}
+*,*::before,*::after{box-sizing:border-box;}
+img,video,svg{max-width:100%;}
+@media (max-width:768px){
+  .hero{
+    width:100% !important;
+    max-width:100% !important;
+    min-height:calc(100svh - 62px) !important;
+    padding:78px 18px 48px !important;
+    margin:0 !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:26px !important;
+    overflow:hidden !important;
+  }
+  .hero-content{
+    width:100% !important;
+    max-width:620px !important;
+    margin:0 auto !important;
+    text-align:center !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+  }
+  .hero-badge{max-width:100%;font-size:.75rem !important;padding:.45rem .8rem !important;margin:0 auto 18px !important;white-space:normal !important;text-align:center !important;}
+  .hero-title{
+    width:100% !important;
+    max-width:100% !important;
+    font-size:clamp(1.9rem,9vw,2.55rem) !important;
+    line-height:1.15 !important;
+    letter-spacing:-.02em !important;
+    margin:0 auto 16px !important;
+    overflow-wrap:anywhere !important;
+    word-break:normal !important;
+  }
+  .hero-title .line{display:block !important;white-space:normal !important;overflow-wrap:anywhere !important;}
+  .hero-subtitle{
+    width:100% !important;
+    max-width:520px !important;
+    font-size:.94rem !important;
+    line-height:1.65 !important;
+    margin:0 auto 22px !important;
+    overflow-wrap:anywhere !important;
+  }
+  .hero-cta{
+    width:100% !important;
+    max-width:360px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    justify-content:center !important;
+    gap:10px !important;
+    margin:0 auto 24px !important;
+  }
+  .hero-cta .btn{
+    width:100% !important;
+    min-height:46px !important;
+    justify-content:center !important;
+    padding:.75rem 1rem !important;
+    white-space:normal !important;
+    text-align:center !important;
+  }
+  .hero-stats{
+    width:100% !important;
+    max-width:360px !important;
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:8px !important;
+    margin:0 auto !important;
+  }
+  .stat{min-width:0 !important;width:100% !important;padding:8px 4px !important;overflow:hidden !important;}
+  .stat-num{font-size:1.15rem !important;line-height:1.2 !important;}
+  .stat-label{font-size:.65rem !important;line-height:1.35 !important;white-space:normal !important;overflow-wrap:anywhere !important;}
+  .hero-visual{width:100% !important;max-width:300px !important;min-height:180px !important;margin:0 auto !important;overflow:visible !important;}
+  .orbit-container{width:min(58vw,210px) !important;height:min(58vw,210px) !important;max-width:210px !important;max-height:210px !important;margin:0 auto !important;}
+  .scroll-indicator{bottom:12px !important;left:50% !important;right:auto !important;transform:translateX(-50%) !important;font-size:.68rem !important;max-width:90vw !important;}
+  .scroll-indicator span{white-space:nowrap !important;}
+
+  /* Keep all common section text inside the phone viewport. */
+  section,.section-container,.container{max-width:100% !important;}
+  .section-container,.container{width:100% !important;padding-left:18px !important;padding-right:18px !important;}
+  h1,h2,h3,h4,p,a,button,span,li{max-width:100%;}
+  p,.section-subtitle,.about-description,.project-description,.experience-description{overflow-wrap:anywhere !important;word-break:normal !important;}
+  .section-title{font-size:clamp(1.8rem,8vw,2.4rem) !important;line-height:1.15 !important;overflow-wrap:anywhere !important;}
+  .section-subtitle{font-size:.92rem !important;line-height:1.55 !important;}
+
+  /* Profile badges stay inside the phone viewport. */
+  .about-image{width:100% !important;overflow:visible !important;}
+  .image-frame{width:min(76vw,300px) !important;height:min(76vw,300px) !important;min-height:0 !important;}
+  .floating-card{max-width:118px !important;font-size:.62rem !important;padding:.42rem .52rem !important;white-space:normal !important;line-height:1.2 !important;overflow-wrap:anywhere !important;}
+  .floating-card.card-1{right:-2px !important;top:6% !important;}
+  .floating-card.card-2{left:-2px !important;bottom:6% !important;}
+}
+@media (max-width:380px){
+  .hero{padding-left:14px !important;padding-right:14px !important;gap:20px !important;}
+  .hero-title{font-size:1.78rem !important;}
+  .hero-subtitle{font-size:.88rem !important;}
+  .hero-stats{gap:4px !important;}
+  .stat-num{font-size:1.05rem !important;}
+  .stat-label{font-size:.6rem !important;}
+  .section-container,.container{padding-left:14px !important;padding-right:14px !important;}
+}
+
+
+/* FINAL FIX: admin button stays clickable above the fixed navbar */
+.admin-btn-fixed {
+  position: fixed !important;
+  top: 14px !important;
+  right: 14px !important;
+  left: auto !important;
+  z-index: 20000 !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+@media (max-width: 768px) {
+  .admin-btn-fixed {
+    top: 12px !important;
+    right: 12px !important;
+    width: 40px !important;
+    height: 40px !important;
+    z-index: 20000 !important;
+  }
+}
