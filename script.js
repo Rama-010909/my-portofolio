@@ -552,33 +552,68 @@ function initContactForm() {
     const name = document.getElementById("name")?.value.trim() || "";
     const email = document.getElementById("email")?.value.trim() || "";
     const message = document.getElementById("message")?.value.trim() || "";
-    const to = (data.contactEmail || "hello@ramzz.dev").trim();
+    const to = (data.contactEmail || "").trim();
 
-    if (!name || !email || !message || !to) return;
-    if (button) { button.disabled = true; button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...'; }
+    if (!name || !email || !message || !to) {
+      showToast("Lengkapi semua data dan pastikan email tujuan sudah diatur.", "error");
+      return;
+    }
+
+    if (button) {
+      button.disabled = true;
+      button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+    }
 
     try {
-      const response = await fetch("https://formsubmit.co/ajax/" + encodeURIComponent(to), {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({
-          name,
-          email,
-          message,
-          _subject: "Pesan dari Portfolio — " + name,
-          _captcha: "false",
-          _template: "table"
-        })
+      // FormSubmit's normal POST is used instead of AJAX because some browsers
+      // block the cross-origin AJAX response even though the email request is valid.
+      const targetName = "ramzz_mail_sender_" + Date.now();
+      const iframe = document.createElement("iframe");
+      iframe.name = targetName;
+      iframe.style.display = "none";
+      document.body.appendChild(iframe);
+
+      const sendForm = document.createElement("form");
+      sendForm.method = "POST";
+      sendForm.action = "https://formsubmit.co/" + encodeURIComponent(to);
+      sendForm.target = targetName;
+      sendForm.style.display = "none";
+
+      const fields = {
+        name,
+        email,
+        message,
+        _subject: "Pesan dari Portfolio — " + name,
+        _captcha: "false",
+        _template: "table",
+        _replyto: email
+      };
+      Object.entries(fields).forEach(([key, value]) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = value;
+        sendForm.appendChild(input);
       });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok || result.success === false) throw new Error(result.message || "Gagal mengirim");
-      form.reset();
-      showToast("Pesan berhasil dikirim ke email.", "success");
+
+      document.body.appendChild(sendForm);
+      sendForm.submit();
+      sendForm.remove();
+
+      // Give the service time to receive the POST. The first FormSubmit use may
+      // require one-time email activation; the visitor is told about that case.
+      setTimeout(() => {
+        form.reset();
+        showToast("Pesan sudah dikirim. Jika ini pengiriman pertama, cek email untuk aktivasi FormSubmit.", "success");
+        iframe.remove();
+      }, 1200);
     } catch (error) {
       console.error("Contact form error:", error);
-      showToast("Pesan belum terkirim. Silakan coba lagi.", "error");
+      showToast("Pengiriman gagal. Coba lagi beberapa saat.", "error");
     } finally {
-      if (button) { button.disabled = false; button.innerHTML = original; }
+      setTimeout(() => {
+        if (button) { button.disabled = false; button.innerHTML = original; }
+      }, 1400);
     }
   });
 }
