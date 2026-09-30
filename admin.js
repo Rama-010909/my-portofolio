@@ -25,15 +25,16 @@ const defaultData = {
   cloudPath: FIREBASE_PATH,
   stats: { projects: 50, years: 5, clients: 30 },
   skills: [
-    { name: "Canva", icon: "fas fa-palette", level: 92 },
-    { name: "MikroTik", icon: "fas fa-network-wired", level: 88 },
-    { name: "Komputer & PC", icon: "fas fa-desktop", level: 90 },
-    { name: "HTML", icon: "fab fa-html5", level: 94 },
-    { name: "CSS", icon: "fab fa-css3-alt", level: 92 },
-    { name: "JavaScript", icon: "fab fa-js", level: 88 },
-    { name: "Web Design", icon: "fas fa-pen-ruler", level: 93 },
-    { name: "Problem Solving", icon: "fas fa-lightbulb", level: 91 }
-  ],
+      { name: "Canva", level: 85 },
+      { name: "MikroTik", level: 80 },
+      { name: "Komputer & PC", level: 85 },
+      { name: "HTML", level: 85 },
+      { name: "CSS", level: 80 },
+      { name: "JavaScript", level: 75 },
+      { name: "Membuat Website & Aplikasi", level: 85 },
+      { name: "Desain Website", level: 90 },
+      { name: "Problem Solving", level: 90 }
+    ],
   projects: [
     {
       id: 1,
