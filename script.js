@@ -4,6 +4,18 @@
 
 const FIREBASE_URL = "https://my-portofolio-rama-default-rtdb.asia-southeast1.firebasedatabase.app";
 const FIREBASE_PATH = "ramzz";
+const REQUESTED_SKILLS = [
+  { name: "Canva", icon: "fas fa-pen-nib", level: 90 },
+  { name: "MikroTik", icon: "fas fa-network-wired", level: 85 },
+  { name: "Komputer & PC", icon: "fas fa-desktop", level: 90 },
+  { name: "HTML", icon: "fab fa-html5", level: 90 },
+  { name: "CSS", icon: "fab fa-css3-alt", level: 85 },
+  { name: "JavaScript", icon: "fab fa-js", level: 80 },
+  { name: "Membuat Website & Aplikasi", icon: "fas fa-laptop-code", level: 90 },
+  { name: "Desain Website", icon: "fas fa-palette", level: 95 },
+  { name: "Problem Solving", icon: "fas fa-lightbulb", level: 95 }
+];
+
 
 const defaultData = {
   displayName: "Rama",
@@ -24,16 +36,16 @@ const defaultData = {
   cloudPath: FIREBASE_PATH,
   stats: { projects: 50, years: 5, clients: 30 },
   skills: [
-      { name: "Canva", level: 85 },
-      { name: "MikroTik", level: 80 },
-      { name: "Komputer & PC", level: 85 },
-      { name: "HTML", level: 85 },
-      { name: "CSS", level: 80 },
-      { name: "JavaScript", level: 75 },
-      { name: "Membuat Website & Aplikasi", level: 85 },
-      { name: "Desain Website", level: 90 },
-      { name: "Problem Solving", level: 90 }
-    ],
+    { name: "Canva", icon: "fas fa-pen-nib", level: 90 },
+    { name: "MikroTik", icon: "fas fa-network-wired", level: 85 },
+    { name: "Komputer & PC", icon: "fas fa-desktop", level: 90 },
+    { name: "HTML", icon: "fab fa-html5", level: 90 },
+    { name: "CSS", icon: "fab fa-css3-alt", level: 85 },
+    { name: "JavaScript", icon: "fab fa-js", level: 80 },
+    { name: "Membuat Website & Aplikasi", icon: "fas fa-laptop-code", level: 90 },
+    { name: "Desain Website", icon: "fas fa-palette", level: 95 },
+    { name: "Problem Solving", icon: "fas fa-lightbulb", level: 95 }
+  ],
   projects: [
     { id: 1, title: "Nebula Commerce", category: "web", desc: "Immersive e-commerce platform with 3D product previews and AI recommendations.", tags: ["React", "Three.js", "Node"], icon: "fas fa-shopping-bag", image: "", link: "" },
     { id: 2, title: "Orbit Dashboard", category: "app", desc: "Real-time analytics dashboard with custom data visualization and smooth transitions.", tags: ["Vue", "D3.js", "Firebase"], icon: "fas fa-chart-line", image: "", link: "" },
@@ -67,7 +79,7 @@ async function pullCloudData() {
     if (!res.ok) return false;
     const remote = await res.json();
     if (remote && typeof remote === "object") {
-      data = { ...structuredClone(defaultData), ...remote, cloudUrl: FIREBASE_URL, cloudPath: FIREBASE_PATH };
+      data = { ...structuredClone(defaultData), ...remote, cloudUrl: FIREBASE_URL, cloudPath: FIREBASE_PATH, skills: structuredClone(REQUESTED_SKILLS) };
       return true;
     }
   } catch (e) {
@@ -100,7 +112,7 @@ window.addEventListener("load", async () => {
   }, 280);
 
   // Pull shared data from cloud (foto profil, teks, dll)
-  await pullCloudData();
+  await Promise.race([pullCloudData(), new Promise(resolve => setTimeout(resolve, 5000))]);
   applyWelcome();
 
   progress = 100;
@@ -293,6 +305,7 @@ function initNavbar() {
 }
 
 function renderContent() {
+  data.skills = structuredClone(REQUESTED_SKILLS);
   const sub = $("#heroSubtitle");
   if (sub) sub.textContent = data.heroSubtitle;
 
