@@ -544,7 +544,7 @@ function showToast(message, type = "success") {
 }
 
 function initContactForm() {
-  $("#contactForm")?.addEventListener("submit", async (e) => {
+  $("#contactForm")?.addEventListener("submit", (e) => {
     e.preventDefault();
     const form = e.currentTarget;
     const button = form.querySelector("button[type=submit]");
@@ -555,67 +555,25 @@ function initContactForm() {
     const to = (data.contactEmail || "").trim();
 
     if (!name || !email || !message || !to) {
-      showToast("Lengkapi nama, email, pesan, dan pastikan email tujuan sudah benar.", "error");
+      showToast("Lengkapi nama, email, dan pesan terlebih dahulu.", "error");
       return;
     }
 
+    const subject = "Pesan dari Portfolio RAMZZ — " + name;
+    const body = `Nama: ${name}\nEmail: ${email}\n\nPesan:\n${message}`;
+    const mailto = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
     if (button) {
       button.disabled = true;
-      button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+      button.innerHTML = '<i class="fas fa-envelope"></i> Membuka Email...';
     }
 
-    try {
-      // FormSubmit is used as the mail gateway for this static site.
-      // The normal POST is intentionally used so it works without CORS/AJAX.
-      const targetName = "ramzz_mail_sender_" + Date.now();
-      const iframe = document.createElement("iframe");
-      iframe.name = targetName;
-      iframe.style.cssText = "position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;border:0;opacity:0;";
-      document.body.appendChild(iframe);
-
-      const sendForm = document.createElement("form");
-      sendForm.method = "POST";
-      sendForm.action = "https://formsubmit.co/" + encodeURIComponent(to);
-      sendForm.target = targetName;
-      sendForm.style.display = "none";
-
-      const fields = {
-        name,
-        email,
-        message,
-        _subject: "Pesan dari Portfolio RAMZZ — " + name,
-        _captcha: "false",
-        _template: "table",
-        _replyto: email,
-        _autoresponse: "Terima kasih. Pesan Anda sudah diterima oleh RAMZZ."
-      };
-
-      Object.entries(fields).forEach(([key, value]) => {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = key;
-        input.value = value;
-        sendForm.appendChild(input);
-      });
-
-      document.body.appendChild(sendForm);
-      sendForm.submit();
-      sendForm.remove();
-
-      // Do not falsely claim that the mailbox has received it. FormSubmit can
-      // require one-time activation for the destination address.
-      setTimeout(() => {
-        form.reset();
-        showToast("Permintaan pengiriman sudah dikirim. Jika email belum masuk, cek Spam dan email aktivasi FormSubmit.", "success");
-        setTimeout(() => iframe.remove(), 2500);
-      }, 1500);
-    } catch (error) {
-      console.error("Contact form error:", error);
-      showToast("Pengiriman gagal. Coba lagi beberapa saat.", "error");
-    } finally {
-      setTimeout(() => {
-        if (button) { button.disabled = false; button.innerHTML = original; }
-      }, 1700);
-    }
+    // No third-party form service is used here, so there is no activation email.
+    // The visitor's email application opens with the recipient and message prefilled.
+    window.location.href = mailto;
+    setTimeout(() => {
+      showToast("Aplikasi email dibuka. Tekan Kirim di aplikasi email untuk mengirim pesan.", "success");
+      if (button) { button.disabled = false; button.innerHTML = original; }
+    }, 900);
   });
 }
