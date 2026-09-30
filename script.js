@@ -544,7 +544,7 @@ function showToast(message, type = "success") {
 }
 
 function initContactForm() {
-  $("#contactForm")?.addEventListener("submit", (e) => {
+  $("#contactForm")?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const form = e.currentTarget;
     const button = form.querySelector("button[type=submit]");
@@ -552,28 +552,43 @@ function initContactForm() {
     const name = document.getElementById("name")?.value.trim() || "";
     const email = document.getElementById("email")?.value.trim() || "";
     const message = document.getElementById("message")?.value.trim() || "";
-    const to = (data.contactEmail || "").trim();
 
-    if (!name || !email || !message || !to) {
+    // Tempatkan URL Web App Google Apps Script di sini setelah kamu deploy.
+    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz8iz9PbUvbm5vVNq_Gd8kEYT3k2BGV7fJ7aeObLlsImDN2pD5JMvxr65XaLNx0Nn-44w/exec";
+
+    if (!name || !email || !message) {
       showToast("Lengkapi nama, email, dan pesan terlebih dahulu.", "error");
       return;
     }
-
-    const subject = "Pesan dari Portfolio RAMZZ — " + name;
-    const body = `Nama: ${name}\nEmail: ${email}\n\nPesan:\n${message}`;
-    const mailto = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("PASTE_GOOGLE")) {
+      showToast("Koneksi email belum dipasang. Masukkan URL Google Apps Script terlebih dahulu.", "error");
+      return;
+    }
 
     if (button) {
       button.disabled = true;
-      button.innerHTML = '<i class="fas fa-envelope"></i> Membuka Email...';
+      button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
     }
 
-    // No third-party form service is used here, so there is no activation email.
-    // The visitor's email application opens with the recipient and message prefilled.
-    window.location.href = mailto;
-    setTimeout(() => {
-      showToast("Aplikasi email dibuka. Tekan Kirim di aplikasi email untuk mengirim pesan.", "success");
-      if (button) { button.disabled = false; button.innerHTML = original; }
-    }, 900);
+    try {
+      // Google Apps Script Web App menerima POST dan meneruskan pesan ke Gmail tujuan.
+      // no-cors diperlukan karena Web App Google dapat merespons melalui redirect lintas-origin.
+      await fetch(GOOGLE_APPS_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ name, email, message, page: window.location.href })
+      });
+      showToast("Pesan berhasil dikirim ke email.", "success");
+      form.reset();
+    } catch (error) {
+      console.error("Google Apps Script email failed:", error);
+      showToast("Pesan gagal dikirim. Coba lagi.", "error");
+    } finally {
+      if (button) {
+        button.disabled = false;
+        button.innerHTML = original;
+      }
+    }
   });
 }
