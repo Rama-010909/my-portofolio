@@ -10,80 +10,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="admin.css">
 
-<style id="ramzz-final-layout-fix">
-/* Desktop hamburger section menu */
-.ramzz-menu-toggle{
-  position:fixed;left:18px;top:50%;transform:translateY(-50%);
-  width:46px;height:46px;border:0;border-radius:14px;
-  background:rgba(255,255,255,.88);backdrop-filter:blur(14px);
-  box-shadow:0 8px 28px rgba(0,0,0,.14);z-index:10001;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
-  cursor:pointer;transition:.25s ease;
-}
-.ramzz-menu-toggle:hover{transform:translateY(-50%) scale(1.06)}
-.ramzz-menu-toggle span{width:20px;height:2px;border-radius:2px;background:currentColor;display:block}
-.ramzz-side-menu{
-  position:fixed;left:0;top:0;bottom:0;width:min(300px,82vw);
-  background:rgba(255,255,255,.96);backdrop-filter:blur(22px);
-  box-shadow:12px 0 40px rgba(0,0,0,.16);
-  transform:translateX(-105%);transition:transform .3s ease;z-index:10003;
-  padding:24px 18px;
-}
-.ramzz-side-menu.open{transform:translateX(0)}
-.ramzz-side-menu-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;font-size:20px}
-.ramzz-side-menu-head button{border:0;background:transparent;font-size:30px;cursor:pointer;line-height:1}
-.ramzz-side-links{display:flex;flex-direction:column;gap:7px}
-.ramzz-side-links a{display:block;padding:13px 15px;border-radius:12px;text-decoration:none;color:inherit;font-weight:600}
-.ramzz-side-links a:hover{background:rgba(127,127,127,.12)}
-.ramzz-menu-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:.25s;z-index:10002}
-.ramzz-menu-backdrop.open{opacity:1;pointer-events:auto}
 
-/* Keep profile photo visible and prevent the desktop Design label from being clipped */
-img.profile-photo,img.profile-image,.profile img,.hero img,.about img{
-  max-width:100%;height:auto;object-fit:cover;
-}
-.profile-photo,.profile-image{overflow:visible}
-.hero,.hero-content,.profile,.profile-content{overflow:visible}
-@media (min-width:769px){
-  .hero,.hero-content{min-width:0}
-  .hero h1,.hero h2,.hero .design,.hero .role,.hero .subtitle{
-    overflow:visible;white-space:normal;word-break:normal;
-  }
-}
-@media (max-width:768px){
-  .ramzz-menu-toggle{display:none}
-  .ramzz-side-menu{display:none}
-  .ramzz-menu-backdrop{display:none}
-  /* Do not hide the profile image on mobile */
-  img.profile-photo,img.profile-image,.profile img,.hero img,.about img{
-    display:block!important;visibility:visible!important;opacity:1!important;
-    max-width:100%!important;height:auto!important;
-  }
-}
-</style>
 
 </head>
 <body>
-<!-- Desktop section menu -->
-<button class="ramzz-menu-toggle" id="ramzzMenuToggle" type="button" aria-label="Buka menu navigasi" aria-expanded="false">
-  <span></span><span></span><span></span>
-</button>
-<div class="ramzz-menu-backdrop" id="ramzzMenuBackdrop"></div>
-<nav class="ramzz-side-menu" id="ramzzSideMenu" aria-hidden="true">
-  <div class="ramzz-side-menu-head">
-    <strong>Menu</strong>
-    <button type="button" id="ramzzMenuClose" aria-label="Tutup menu">×</button>
-  </div>
-  <div class="ramzz-side-links">
-    <a href="#home">Home</a>
-    <a href="#about">About</a>
-    <a href="#skills">Skills</a>
-    <a href="#projects">Projects</a>
-    <a href="#experience">Experience</a>
-    <a href="#contact">Contact</a>
-  </div>
-</nav>
-
   <!-- Login Screen -->
   <div id="loginScreen" class="login-screen">
     <div class="login-box">

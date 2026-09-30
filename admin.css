@@ -815,3 +815,7 @@ body {
 .eye-btn.active {
   color: var(--accent, var(--cyan));
 }
+
+
+/* The public portfolio hamburger must never appear on the admin/login page. */
+.ramzz-menu-toggle,.ramzz-side-menu,.ramzz-menu-backdrop{display:none !important;}

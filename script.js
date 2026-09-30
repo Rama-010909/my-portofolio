@@ -530,18 +530,55 @@ function initMusic() {
   audio.addEventListener("play", () => setPlaying(true));
 }
 
+function showToast(message, type = "success") {
+  document.querySelectorAll(".ramzz-toast").forEach((el) => el.remove());
+  const toast = document.createElement("div");
+  toast.className = "ramzz-toast " + type;
+  toast.innerHTML = `<i class="fas ${type === "success" ? "fa-circle-check" : "fa-circle-exclamation"}"></i><span>${message}</span>`;
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add("show"));
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 250);
+  }, 3500);
+}
+
 function initContactForm() {
-  $("#contactForm")?.addEventListener("submit", (e) => {
+  $("#contactForm")?.addEventListener("submit", async (e) => {
     e.preventDefault();
+    const form = e.currentTarget;
+    const button = form.querySelector("button[type=submit]");
+    const original = button?.innerHTML || "Kirim Pesan";
     const name = document.getElementById("name")?.value.trim() || "";
     const email = document.getElementById("email")?.value.trim() || "";
     const message = document.getElementById("message")?.value.trim() || "";
     const to = (data.contactEmail || "hello@ramzz.dev").trim();
-    const subject = encodeURIComponent("Pesan dari Portfolio — " + name);
-    const body = encodeURIComponent(
-      "Nama: " + name + "\nEmail: " + email + "\n\nPesan:\n" + message
-    );
-    window.location.href = "mailto:" + to + "?subject=" + subject + "&body=" + body;
-    e.target.reset();
+
+    if (!name || !email || !message || !to) return;
+    if (button) { button.disabled = true; button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...'; }
+
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/" + encodeURIComponent(to), {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          message,
+          _subject: "Pesan dari Portfolio — " + name,
+          _captcha: "false",
+          _template: "table"
+        })
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || result.success === false) throw new Error(result.message || "Gagal mengirim");
+      form.reset();
+      showToast("Pesan berhasil dikirim ke email.", "success");
+    } catch (error) {
+      console.error("Contact form error:", error);
+      showToast("Pesan belum terkirim. Silakan coba lagi.", "error");
+    } finally {
+      if (button) { button.disabled = false; button.innerHTML = original; }
+    }
   });
 }
