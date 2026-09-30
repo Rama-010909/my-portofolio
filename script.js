@@ -555,7 +555,7 @@ function initContactForm() {
     const to = (data.contactEmail || "").trim();
 
     if (!name || !email || !message || !to) {
-      showToast("Lengkapi semua data dan pastikan email tujuan sudah diatur.", "error");
+      showToast("Lengkapi nama, email, pesan, dan pastikan email tujuan sudah benar.", "error");
       return;
     }
 
@@ -565,12 +565,12 @@ function initContactForm() {
     }
 
     try {
-      // FormSubmit's normal POST is used instead of AJAX because some browsers
-      // block the cross-origin AJAX response even though the email request is valid.
+      // FormSubmit is used as the mail gateway for this static site.
+      // The normal POST is intentionally used so it works without CORS/AJAX.
       const targetName = "ramzz_mail_sender_" + Date.now();
       const iframe = document.createElement("iframe");
       iframe.name = targetName;
-      iframe.style.display = "none";
+      iframe.style.cssText = "position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;border:0;opacity:0;";
       document.body.appendChild(iframe);
 
       const sendForm = document.createElement("form");
@@ -583,11 +583,13 @@ function initContactForm() {
         name,
         email,
         message,
-        _subject: "Pesan dari Portfolio — " + name,
+        _subject: "Pesan dari Portfolio RAMZZ — " + name,
         _captcha: "false",
         _template: "table",
-        _replyto: email
+        _replyto: email,
+        _autoresponse: "Terima kasih. Pesan Anda sudah diterima oleh RAMZZ."
       };
+
       Object.entries(fields).forEach(([key, value]) => {
         const input = document.createElement("input");
         input.type = "hidden";
@@ -600,20 +602,20 @@ function initContactForm() {
       sendForm.submit();
       sendForm.remove();
 
-      // Give the service time to receive the POST. The first FormSubmit use may
-      // require one-time email activation; the visitor is told about that case.
+      // Do not falsely claim that the mailbox has received it. FormSubmit can
+      // require one-time activation for the destination address.
       setTimeout(() => {
         form.reset();
-        showToast("Pesan sudah dikirim. Jika ini pengiriman pertama, cek email untuk aktivasi FormSubmit.", "success");
-        iframe.remove();
-      }, 1200);
+        showToast("Permintaan pengiriman sudah dikirim. Jika email belum masuk, cek Spam dan email aktivasi FormSubmit.", "success");
+        setTimeout(() => iframe.remove(), 2500);
+      }, 1500);
     } catch (error) {
       console.error("Contact form error:", error);
       showToast("Pengiriman gagal. Coba lagi beberapa saat.", "error");
     } finally {
       setTimeout(() => {
         if (button) { button.disabled = false; button.innerHTML = original; }
-      }, 1400);
+      }, 1700);
     }
   });
 }
